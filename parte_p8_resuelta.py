@@ -422,4 +422,4 @@ print(inventario)
         
 '''
             
-        
+#weeee ke onda
