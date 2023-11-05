@@ -414,12 +414,5 @@ print(inventario)
     
 
 
-'''
-
-
-
-#Hacer ejercicios de lectura de bytes, parentesis balanceados y polacos.   
-        
-'''
-            
+    
 #weeee ke onda
