@@ -19,17 +19,25 @@ public class Recordatorio {
     }
 
     public String mensaje() {
-        return _mensaje;
+        String mensaje = new String(_mensaje);
+        return mensaje;
     }
 
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("No implementada aun");
+        return _mensaje + " @ " + _fecha + " "+ _horario;
     }
 
     @Override
     public boolean equals(Object otro) {
-        throw new UnsupportedOperationException("No implementada aun");
+        boolean is_null = otro == null;
+        boolean is_diff_class = this.getClass() != otro.getClass();
+        if (is_diff_class || is_null) {
+            return false;
+        }
+        Recordatorio otroRecordatorio = (Recordatorio) otro;
+        return _mensaje == otroRecordatorio._mensaje && _fecha == otroRecordatorio._fecha 
+        && _horario == otroRecordatorio._horario;
     }
 
     private String _mensaje;
