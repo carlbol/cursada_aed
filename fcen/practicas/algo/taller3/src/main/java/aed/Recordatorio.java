@@ -3,19 +3,23 @@ package aed;
 public class Recordatorio {
 
     public Recordatorio(String mensaje, Fecha fecha, Horario horario) {
-        throw new UnsupportedOperationException("No implementada aun");
+        _mensaje = mensaje;
+        _fecha = new Fecha(fecha.dia(),fecha.mes());
+        _horario = new Horario(horario.hora(), horario.minutos());
     }
 
     public Horario horario() {
-        throw new UnsupportedOperationException("No implementada aun");
+        Horario mismoHorario = new Horario(_horario.hora(), _horario.minutos());
+        return mismoHorario;
     }
 
     public Fecha fecha() {
-        throw new UnsupportedOperationException("No implementada aun");
+        Fecha mismaFecha = new Fecha(_fecha.dia(),_fecha.mes());
+        return mismaFecha;
     }
 
     public String mensaje() {
-        throw new UnsupportedOperationException("No implementada aun");
+        return _mensaje;
     }
 
     @Override
@@ -28,4 +32,7 @@ public class Recordatorio {
         throw new UnsupportedOperationException("No implementada aun");
     }
 
+    private String _mensaje;
+    private Fecha _fecha;
+    private Horario _horario;
 }

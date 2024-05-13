@@ -8,7 +8,7 @@ public class Fecha {
     
 
     public Fecha(Fecha fecha) {
-        throw new UnsupportedOperationException("No implementada aun");
+        new Fecha(_dia, _mes); 
     }
 
     public Integer dia() {
@@ -31,7 +31,13 @@ public class Fecha {
 
     @Override
     public boolean equals(Object otra) {
-        throw new UnsupportedOperationException("No implementada aun");
+        boolean is_null = otra == null;
+        boolean is_diff_object = this.getClass() != otra.getClass();
+        if (is_null || is_diff_object) {
+            return false;
+        }
+        Fecha otraFecha = (Fecha) otra;
+        return _dia == otraFecha._dia && _mes == otraFecha._mes;
     }
 
     public void incrementarDia() {
