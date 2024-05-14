@@ -1,38 +1,67 @@
 package aed;
 
+import java.util.Collection;
+
 class ArregloRedimensionableDeRecordatorios implements SecuenciaDeRecordatorios {
 
     public ArregloRedimensionableDeRecordatorios() {
-        throw new UnsupportedOperationException("No implementada aun");
+        _arreglo = new Recordatorio[0];
     }
 
     public ArregloRedimensionableDeRecordatorios(ArregloRedimensionableDeRecordatorios vector) {
-        throw new UnsupportedOperationException("No implementada aun");
+       _arreglo = vector._arreglo.clone();
     }
 
     public int longitud() {
-        throw new UnsupportedOperationException("No implementada aun");
+        return _arreglo.length;
     }
 
-    public void agregarAtras(Recordatorio i) {
-        throw new UnsupportedOperationException("No implementada aun");
-    }
+
+
+    public void agregarAtras(Recordatorio j) {
+        int largo = _arreglo.length;
+        Recordatorio[] nuevoArreglo = new Recordatorio[largo+1];
+    
+        for (int i = 0;i<largo;i++) {
+            nuevoArreglo[i] = _arreglo[i];
+        }
+        nuevoArreglo[largo] = j;
+        _arreglo = nuevoArreglo;
+     }
 
     public Recordatorio obtener(int i) {
-        throw new UnsupportedOperationException("No implementada aun");
+        return _arreglo[i];
     }
 
     public void quitarAtras() {
-        throw new UnsupportedOperationException("No implementada aun");
+        int largo = _arreglo.length-1;
+        Recordatorio[] nuevoArreglo = new Recordatorio[largo];
+        for (int i = 0;i<largo;i++) {
+            nuevoArreglo[i] = _arreglo[i];
+        }
+        _arreglo = nuevoArreglo;
     }
 
     public void modificarPosicion(int indice, Recordatorio valor) {
-        throw new UnsupportedOperationException("No implementada aun");
+        _arreglo[indice] = valor;
 
     }
 
     public ArregloRedimensionableDeRecordatorios copiar() {
-        throw new UnsupportedOperationException("No implementada aun");
+        int largo = _arreglo.length;
+        ArregloRedimensionableDeRecordatorios nuevoArreglo = new ArregloRedimensionableDeRecordatorios();
+        for (int i = 0;i<largo;i++) {
+            nuevoArreglo.agregarAtras(_arreglo[i]);
+        }
+        return nuevoArreglo;
     }
 
+    private Recordatorio[] _arreglo;
+
+
+
 }
+
+
+
+   
