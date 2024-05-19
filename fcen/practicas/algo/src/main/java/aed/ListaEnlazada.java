@@ -140,7 +140,18 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("No implementada aun");
+        StringBuffer string = new StringBuffer();
+        string.append("[");
+        Nodo actual = primero;
+        for (int i=0;i<size;i++){
+            string.append(actual.valor.toString());
+            if (size != 1 && i != size -1) {
+                string.append(", ");
+            }
+            actual = actual.siguiente;
+        }
+        string.append("]");
+        return string.toString();
     }
 
     private class ListaIterador implements Iterador<T> {
@@ -159,12 +170,16 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         }
 
         public T siguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+            int actual = dedito;
+            dedito += 1;
+            return obtener(actual); 
         }
         
 
         public T anterior() {
-	        throw new UnsupportedOperationException("No implementada aun");
+	        int actual = dedito-1;
+            dedito -= 1;
+            return obtener(actual);
         }
     }
 
