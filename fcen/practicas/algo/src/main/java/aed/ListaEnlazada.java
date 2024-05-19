@@ -68,35 +68,74 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     }
 
     public static void main(String[] args) {
-        ListaEnlazada<Float> lista = new ListaEnlazada<>();
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
 
-        lista.agregarAdelante(42.0f);
-        
-        lista.agregarAdelante(41.0f);
-      
-        lista.agregarAdelante(40.0f);
-        
-        lista.agregarAdelante(39.0f);
-        lista.obtener(0);
-        lista.obtener(1);
-        lista.obtener(2);
-        lista.obtener(3);
+        lista.agregarAtras(42);
+        lista.agregarAtras(43);
+        lista.agregarAtras(44);
+        lista.agregarAtras(45);
+
+        lista.modificarPosicion(2, 27);
+        lista.longitud();
     }
 
     public void eliminar(int i) {
-        throw new UnsupportedOperationException("No implementada aun");
+        Nodo actual = primero;
+        int contador = 0;
+        while (contador < i) {
+            actual = actual.siguiente;
+            contador += 1;
+        }
+        if (i==0 && size > 1){
+            primero = actual.siguiente;
+            primero.anterior = null;
+        } 
+        else if (i==0 && size == 1){
+            primero = null;
+        }
+        else if (i == size - 1) {
+            ultimo = actual.anterior;
+            ultimo.siguiente = null; 
+        }
+        else {
+            Nodo anterior = actual.anterior;
+            Nodo posterior = actual.siguiente;
+            anterior.siguiente = posterior;
+            posterior.anterior = anterior;
+        }
+        size -= 1;
     }
 
     public void modificarPosicion(int indice, T elem) {
-        throw new UnsupportedOperationException("No implementada aun");
+        Nodo actual = primero;
+        int contador = 0;
+        while (contador < indice) {
+            actual = actual.siguiente;
+            contador += 1;
+        }
+        actual.valor = elem;
     }
 
     public ListaEnlazada<T> copiar() {
-        throw new UnsupportedOperationException("No implementada aun");
+        ListaEnlazada<T> copia = new ListaEnlazada<T>();
+        Nodo copiada = primero;
+        for (int i = 0; i < size;i++){
+            copia.agregarAtras(copiada.valor);
+            copiada = copiada.siguiente;
+        }
+        copia.size = size;
+        return copia;
     }
 
     public ListaEnlazada(ListaEnlazada<T> lista) {
-        throw new UnsupportedOperationException("No implementada aun");
+       
+        Nodo copiada = lista.primero;
+        for (int i = 0; i < lista.size;i++){
+            agregarAtras(copiada.valor);
+            copiada = copiada.siguiente;
+        }
+        size = lista.size;
+
     }
     
     @Override
