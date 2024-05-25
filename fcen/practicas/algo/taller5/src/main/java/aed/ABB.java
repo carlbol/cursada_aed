@@ -1,5 +1,6 @@
 package aed;
 
+
 import java.util.*;
 
 // Todos los tipos de datos "Comparables" tienen el método compareTo()
@@ -39,7 +40,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                 return valor;
             }
             else {
-                return der.minimo_nodo();
+                return der.maximo_nodo();
             }
         }
 
@@ -110,6 +111,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                 else {
                     actual = der;
                 }
+            }
             if (actual.cant_hijos() == 0){
             actual = null;
             }
@@ -118,12 +120,16 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                     actual.arriba.der = actual.der;
                     actual.der.arriba = actual.arriba; 
                 }
+                else {
+                    actual.arriba.izq = actual.izq;
+                    actual.izq.arriba = actual.arriba;
+                }
             }
-            else {
-                actual.valor = actual.minimo_nodo();
-                actual.izq.eliminar_nodo(actual.valor);
+            else if (actual.cant_hijos() == 2) {
+                actual.valor = actual.der.minimo_nodo();
+                actual.der.eliminar_nodo(actual.valor);
             }
-            }
+            
         }
 
     }
@@ -163,10 +169,15 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         
         conjunto.insertar(5);
         conjunto.insertar(4);
-        conjunto.insertar(7);
-        conjunto.insertar(6);
-        conjunto.insertar(8);
-        conjunto.eliminar(7);
+        conjunto.insertar(20);
+        conjunto.insertar(15);
+        conjunto.insertar(12);
+        conjunto.insertar(24);
+        conjunto.insertar(22);
+        conjunto.insertar(25);
+        conjunto.insertar(19);
+        conjunto.insertar(21);
+        conjunto.eliminar(20);
     }
 
     public boolean pertenece(T elem){
