@@ -102,14 +102,40 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             return cant;
         }
 
+        public Nodo sucesor_nodo(){
+            Nodo sucesor = null;
+            Nodo derecho = this.der;
+            Nodo arriba = this.arriba;
+            if (derecho != null){
+                if (derecho.valor.compareTo(derecho.minimo_nodo()) > 0){
+                    while (derecho.valor != derecho.minimo_nodo()) {
+                        derecho = derecho.izq;
+                    }
+                }
+                sucesor = derecho;
+            }
+            else if (arriba != null){
+                if (arriba.valor.compareTo(this.valor)>0){
+                    sucesor = arriba;
+                }
+                else {
+                    while (arriba.valor.compareTo(this.valor)<0){
+                        arriba = arriba.arriba;
+                    }
+                    sucesor = arriba;
+                }
+            }
+            return sucesor;
+        }
+
         public void eliminar_nodo(T elem){
             Nodo actual = this;
             while (actual.valor != elem){
                 if (actual.valor.compareTo(elem) > 0){
-                    actual = izq;
+                    actual = actual.izq;
                 } 
                 else {
-                    actual = der;
+                    actual = actual.der;
                 }
             }
             if (actual.cant_hijos() == 0){
@@ -169,15 +195,13 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         
         conjunto.insertar(5);
         conjunto.insertar(4);
-        conjunto.insertar(20);
-        conjunto.insertar(15);
-        conjunto.insertar(12);
-        conjunto.insertar(24);
-        conjunto.insertar(22);
-        conjunto.insertar(25);
-        conjunto.insertar(19);
-        conjunto.insertar(21);
-        conjunto.eliminar(20);
+        conjunto.insertar(7);
+        conjunto.insertar(6);
+        conjunto.insertar(8);
+        conjunto.toString();
+        conjunto.eliminar(5);
+        conjunto.eliminar(7);
+        conjunto.toString();
     }
 
     public boolean pertenece(T elem){
@@ -191,20 +215,50 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public String toString(){
-        throw new UnsupportedOperationException("No implementada aun");
+        int contador = 0;
+        Nodo _actual = _raiz;
+        while (_actual.valor != _raiz.minimo_nodo()) {
+            _actual = _actual.izq;
+        }
+        StringBuffer str = new StringBuffer();
+        str.append("{");
+        while (contador < _cardinal){
+            str.append(_actual.valor); 
+            if (contador < _cardinal-1){
+                str.append(",");
+                _actual = _actual.sucesor_nodo();
+            }
+            contador += 1;
+        }
+        str.append("}");
+        return str.toString();
     }
 
     private class ABB_Iterador implements Iterador<T> {
         private Nodo _actual;
+        private int dedito;
+        ABB_Iterador(){
+            dedito = 0;
+            while (_actual.valor != _raiz.minimo_nodo()) {
+                _actual = _actual.izq;
+            }
+            
+        }
 
         public boolean haySiguiente() {            
-            throw new UnsupportedOperationException("No implementada aun");
+            return dedito < cardinal();
         }
     
         public T siguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
-        }
+            T res = _actual.valor;
+            if (haySiguiente()){
+                dedito += 1;
+                _actual = _actual.sucesor_nodo();
+            }
+            return res;
+            }
     }
+        
 
     public Iterador<T> iterador() {
         return new ABB_Iterador();
