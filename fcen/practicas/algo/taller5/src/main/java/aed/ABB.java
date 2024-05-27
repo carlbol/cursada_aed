@@ -130,6 +130,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
 
         public void eliminar_nodo(T elem){
             Nodo actual = this;
+            Nodo padre = actual.arriba;
             while (actual.valor != elem){
                 if (actual.valor.compareTo(elem) > 0){
                     actual = actual.izq;
@@ -137,9 +138,15 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                 else {
                     actual = actual.der;
                 }
+                padre = actual.arriba;
             }
             if (actual.cant_hijos() == 0){
-            actual = null;
+                if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
+                    padre.der = null;
+                }
+                else if (padre.izq != null && actual.valor.compareTo(padre.izq.valor) == 0){
+                    padre.izq = null;
+                }
             }
             else if (actual.cant_hijos() == 1){
                 if (actual.izq == null){
@@ -195,13 +202,15 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         
         conjunto.insertar(5);
         conjunto.insertar(4);
-        conjunto.insertar(7);
-        conjunto.insertar(6);
-        conjunto.insertar(8);
-        conjunto.toString();
-        conjunto.eliminar(5);
-        conjunto.eliminar(7);
-        conjunto.toString();
+        conjunto.insertar(20);
+        conjunto.insertar(15);
+        conjunto.insertar(12);
+        conjunto.insertar(24);
+        conjunto.insertar(22);
+        conjunto.insertar(25);
+        conjunto.insertar(19);
+        conjunto.insertar(21);
+        conjunto.eliminar(20);
     }
 
     public boolean pertenece(T elem){
@@ -239,9 +248,9 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         private int dedito;
         ABB_Iterador(){
             dedito = 0;
-            while (_actual.valor != _raiz.minimo_nodo()) {
+            /*while (_actual.valor != _raiz.minimo_nodo()) {
                 _actual = _actual.izq;
-            }
+            }*/
             
         }
 
