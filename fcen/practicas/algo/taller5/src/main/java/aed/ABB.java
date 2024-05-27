@@ -224,7 +224,19 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public String toString(){
-        int contador = 0;
+        Iterador<T> it = this.iterador();
+        StringBuffer str = new StringBuffer();
+        str.append("{");
+        while (it.haySiguiente()){
+            T actual = it.siguiente();
+            str.append(actual);
+            if (actual.compareTo(this.maximo()) != 0){
+            str.append(",");
+            }
+        }
+        str.append("}");
+        return str.toString();
+       /*  int contador = 0;
         Nodo _actual = _raiz;
         while (_actual.valor != _raiz.minimo_nodo()) {
             _actual = _actual.izq;
@@ -240,17 +252,17 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             contador += 1;
         }
         str.append("}");
-        return str.toString();
+        return str.toString();*/
     }
 
     private class ABB_Iterador implements Iterador<T> {
-        private Nodo _actual;
+        private Nodo _actual = _raiz;
         private int dedito;
         ABB_Iterador(){
             dedito = 0;
-            /*while (_actual.valor != _raiz.minimo_nodo()) {
+            while (_actual.valor != _raiz.minimo_nodo()) {
                 _actual = _actual.izq;
-            }*/
+            }
             
         }
 
@@ -261,8 +273,10 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         public T siguiente() {
             T res = _actual.valor;
             if (haySiguiente()){
-                dedito += 1;
+                if (dedito < cardinal()-1){
                 _actual = _actual.sucesor_nodo();
+                }
+                dedito += 1;
             }
             return res;
             }
