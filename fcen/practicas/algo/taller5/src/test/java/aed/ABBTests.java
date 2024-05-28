@@ -231,7 +231,7 @@ class ABBTests {
         assertEquals(NCLAVES, conjunto.cardinal());
     
         // Insertar de nuevo
-        for (Integer i = 0; i < NCLAVES; i++) {
+         for (Integer i = 0; i < NCLAVES; i++) {
             Integer k = clave(i);
             assertEquals(true, conjunto.pertenece(k));
             conjunto.insertar(k);

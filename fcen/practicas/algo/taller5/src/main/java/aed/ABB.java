@@ -68,7 +68,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                 return false;
             } 
             else {
-                if (valor == elem) {
+                if (valor.compareTo(elem) == 0) {
                     return true;
                 }
                 else {
@@ -131,7 +131,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         public void eliminar_nodo(T elem){
             Nodo actual = this;
             Nodo padre = actual.arriba;
-            while (actual.valor != elem){
+            while (actual.valor.compareTo(elem) != 0){
                 if (actual.valor.compareTo(elem) > 0){
                     actual = actual.izq;
                 } 
@@ -192,35 +192,60 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
       } else {
         if (!pertenece(elem)){
             _cardinal += 1;
+            _raiz.insertar_nodo(elem);
         }
-        _raiz.insertar_nodo(elem);
+        
       }
     }
-
+    
     public static void main(String[] args) {
-        ABB<Integer> conjunto = new ABB<Integer>();
         
-        conjunto.insertar(5);
-        conjunto.insertar(4);
-        conjunto.insertar(20);
-        conjunto.insertar(15);
-        conjunto.insertar(12);
-        conjunto.insertar(24);
-        conjunto.insertar(22);
-        conjunto.insertar(25);
-        conjunto.insertar(19);
-        conjunto.insertar(21);
-        conjunto.eliminar(20);
+        
+        ABB<Integer> conjunto = new ABB<Integer>();
+        Integer contador = 0;
+        Integer contador_pertenece_despues_borrado = 0;
+        for (Integer i = 0; i < 1000; i++ ){
+            Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
+            conjunto.pertenece(k);
+            conjunto.insertar(k);
+            conjunto.pertenece(k);
+
+        }
+        for (Integer i = 0; i < 1000; i++) {
+            Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
+            
+            if (i % 2 == 0) {
+                boolean pertenece;
+                
+                conjunto.eliminar(k);
+                pertenece = conjunto.pertenece(k);
+                contador += 1;
+                if (pertenece){
+                    contador_pertenece_despues_borrado += 1;
+                }
+                
+                conjunto.cardinal();
+            }
+        }
+        System.out.println(contador);
+        System.out.println(contador_pertenece_despues_borrado);
+   
     }
 
     public boolean pertenece(T elem){
-        return this._raiz.pertenece_nodo(elem);
+        boolean res = false;
+        if (_cardinal > 0){
+            res = this._raiz.pertenece_nodo(elem); 
+        }
+        return res;
     }
 
 
     public void eliminar(T elem){
-        _cardinal -= 1;
-        _raiz.eliminar_nodo(elem);
+        if (pertenece(elem)){
+            _cardinal -= 1;
+            _raiz.eliminar_nodo(elem);
+        }
     }
 
     public String toString(){
