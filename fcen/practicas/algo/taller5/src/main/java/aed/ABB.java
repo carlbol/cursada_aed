@@ -1,7 +1,6 @@
 package aed;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
 
@@ -246,9 +245,8 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                 conjunto.cardinal();
             }
         }
-        System.out.println(contador);
-        System.out.println(contador_pertenece_despues_borrado);
-
+        
+        Integer var = 0;
         
         for (Integer i = 0; i < 1000; i++) {
             Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
@@ -257,9 +255,11 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             if (i % 2 == 0) {
                 pertenece = conjunto.pertenece(k);
             } else {
+                var += 1;
                 pertenece = conjunto.pertenece(k);
                 conjunto.eliminar(k);
                 pertenece = conjunto.pertenece(k);
+                System.out.println(var);
             }
         }
         
