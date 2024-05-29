@@ -1,6 +1,8 @@
 package aed;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.*;
 
 // Todos los tipos de datos "Comparables" tienen el método compareTo()
@@ -150,12 +152,25 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             }
             else if (actual.cant_hijos() == 1){
                 if (actual.izq == null){
-                    actual.arriba.der = actual.der;
-                    actual.der.arriba = actual.arriba; 
+                    if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
+                        padre.der = actual.der;
+                        actual.der.arriba = padre; 
+                    } 
+                    else if (padre.izq != null && actual.valor.compareTo(padre.izq.valor) == 0) {
+                        padre.izq = actual.der;
+                        actual.der.arriba = padre;
+                    }
+                    
                 }
                 else {
-                    actual.arriba.izq = actual.izq;
-                    actual.izq.arriba = actual.arriba;
+                    if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
+                        padre.der = actual.izq;
+                        actual.izq.arriba = padre; 
+                    } 
+                    else if (padre.izq != null && actual.valor.compareTo(padre.izq.valor) == 0) {
+                        padre.izq = actual.izq;
+                        actual.izq.arriba = padre;
+                    }
                 }
             }
             else if (actual.cant_hijos() == 2) {
@@ -216,12 +231,16 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             
             if (i % 2 == 0) {
                 boolean pertenece;
-                
+                if (k == -715978){
+                    pertenece = conjunto.pertenece(k);
+                }
                 conjunto.eliminar(k);
                 pertenece = conjunto.pertenece(k);
                 contador += 1;
                 if (pertenece){
                     contador_pertenece_despues_borrado += 1;
+                    System.out.println(k);
+                
                 }
                 
                 conjunto.cardinal();
@@ -229,7 +248,21 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         }
         System.out.println(contador);
         System.out.println(contador_pertenece_despues_borrado);
-   
+
+        
+        for (Integer i = 0; i < 1000; i++) {
+            Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
+            boolean pertenece;
+            
+            if (i % 2 == 0) {
+                pertenece = conjunto.pertenece(k);
+            } else {
+                pertenece = conjunto.pertenece(k);
+                conjunto.eliminar(k);
+                pertenece = conjunto.pertenece(k);
+            }
+        }
+        
     }
 
     public boolean pertenece(T elem){

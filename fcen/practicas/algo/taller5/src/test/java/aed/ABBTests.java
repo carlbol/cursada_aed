@@ -242,7 +242,7 @@ class ABBTests {
         // Eliminar los valores para i par
         for (Integer i = 0; i < NCLAVES; i++) {
             Integer k = clave(i);
-            assertEquals(true, conjunto.pertenece(k));
+           assertEquals(true, conjunto.pertenece(k));
             if (i % 2 == 0) {
                 conjunto.eliminar(k);
                 assertEquals(false, conjunto.pertenece(k));
