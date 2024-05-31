@@ -142,7 +142,10 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                 padre = actual.arriba;
             }
             if (actual.cant_hijos() == 0){
-                if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
+                if (padre == null){
+                    actual = null;
+                }
+                else if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
                     padre.der = null;
                 }
                 else if (padre.izq != null && actual.valor.compareTo(padre.izq.valor) == 0){
@@ -151,7 +154,11 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             }
             else if (actual.cant_hijos() == 1){
                 if (actual.izq == null){
-                    if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
+                    if (padre == null){
+                        _raiz = actual.der;
+                        _raiz.arriba = null;
+                    }
+                    else if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
                         padre.der = actual.der;
                         actual.der.arriba = padre; 
                     } 
@@ -162,6 +169,10 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
                     
                 }
                 else {
+                    if (padre == null){
+                        _raiz = actual.izq;
+                        _raiz.arriba = null;
+                    }
                     if (padre.der != null && actual.valor.compareTo(padre.der.valor) == 0){
                         padre.der = actual.izq;
                         actual.izq.arriba = padre; 
@@ -212,58 +223,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
       }
     }
     
-    public static void main(String[] args) {
-        
-        
-        ABB<Integer> conjunto = new ABB<Integer>();
-        Integer contador = 0;
-        Integer contador_pertenece_despues_borrado = 0;
-        for (Integer i = 0; i < 1000; i++ ){
-            Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
-            conjunto.pertenece(k);
-            conjunto.insertar(k);
-            conjunto.pertenece(k);
-
-        }
-        for (Integer i = 0; i < 1000; i++) {
-            Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
-            
-            if (i % 2 == 0) {
-                boolean pertenece;
-                if (k == -715978){
-                    pertenece = conjunto.pertenece(k);
-                }
-                conjunto.eliminar(k);
-                pertenece = conjunto.pertenece(k);
-                contador += 1;
-                if (pertenece){
-                    contador_pertenece_despues_borrado += 1;
-                    System.out.println(k);
-                
-                }
-                
-                conjunto.cardinal();
-            }
-        }
-        
-        Integer var = 0;
-        
-        for (Integer i = 0; i < 1000; i++) {
-            Integer k = 1000 * ((i * i - 100 * i) % 1000) + i;
-            boolean pertenece;
-            
-            if (i % 2 == 0) {
-                pertenece = conjunto.pertenece(k);
-            } else {
-                var += 1;
-                pertenece = conjunto.pertenece(k);
-                conjunto.eliminar(k);
-                pertenece = conjunto.pertenece(k);
-                System.out.println(var);
-            }
-        }
-        
-    }
+    
 
     public boolean pertenece(T elem){
         boolean res = false;
