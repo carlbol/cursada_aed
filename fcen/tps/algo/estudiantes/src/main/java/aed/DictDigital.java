@@ -10,7 +10,7 @@ public interface DictDigital<V,T> {
 
     public void definir(String clave, T valor);
 
-    public ListaEnlazada<String> claves();
+    public Secuencia<String> claves();
 
 
 }

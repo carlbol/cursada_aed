@@ -10,7 +10,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
         T definicion;
         
         Nodo(){
-            siguiente = new ListaEnlazada<Nodo>();
+            siguiente = new ListaEnlazada<>();
             for (int i=0; i<256; i++){
                 siguiente.agregarAtras(null);;
             }
@@ -79,12 +79,12 @@ public class Trie<V,T> implements DictDigital<V,T> {
     }
 
     public ListaEnlazada<String> claves(){
-        ListaEnlazada lista_claves = new ListaEnlazada();
+        ListaEnlazada<String> lista_claves = new ListaEnlazada<>();
         enlistar(this.raiz, "", lista_claves);
         return lista_claves;
     }
 
-    private void enlistar(Nodo x, String str, ListaEnlazada lista){
+    private void enlistar(Nodo x, String str, ListaEnlazada<String> lista){
         if (x == null){
             return ;
         }
@@ -95,6 +95,33 @@ public class Trie<V,T> implements DictDigital<V,T> {
             enlistar(x.siguiente.obtener(c), str+c, lista);
         }
     }
+    
+    public void borrar(String clave){
+        raiz = borrar_nodo(raiz, clave, 0);
+    }
+
+    private Nodo borrar_nodo(Nodo x, String clave, Integer d){
+        if (x == null){
+            return null;
+        }
+        if (d == clave.length()){
+            x.definicion = null;
+        }
+        else {
+            char c = clave.charAt(d);
+            Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.obtener(c), clave, d+1);
+            x.siguiente.modificarPosicion(c, nodo_a_eliminar);
+        }
+        if (x.definicion != null){
+            return x;
+        }
+        for (char c = 0; c < 256; c++){
+            if (x.siguiente.obtener(c)!=null){
+                return x;
+            }   
+        }
+        return null;
+    }
 
 
     public static void main(String[] args) {
@@ -104,6 +131,10 @@ public class Trie<V,T> implements DictDigital<V,T> {
         System.err.println(prueba.obtener("guacamole"));
         prueba.definir("guacamoles", "83");
         System.err.println(prueba.obtener("guacamoles"));
+        prueba.definir("AGUA", "12");
+        prueba.definir("AGuA", "12");
+        prueba.definir("guarapo", "89");
+        prueba.borrar("AGUA");
         System.err.println(prueba.claves());
 
     }
