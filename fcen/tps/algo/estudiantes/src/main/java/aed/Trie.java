@@ -106,6 +106,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
         }
         if (d == clave.length()){
             x.definicion = null;
+            size -= 1;
         }
         else {
             char c = clave.charAt(d);
@@ -135,7 +136,9 @@ public class Trie<V,T> implements DictDigital<V,T> {
         prueba.definir("AGuA", "12");
         prueba.definir("guarapo", "89");
         prueba.borrar("AGUA");
+        prueba.borrar("guarapo");
         System.err.println(prueba.claves());
+        System.err.println(prueba.tamano());
 
     }
 }
