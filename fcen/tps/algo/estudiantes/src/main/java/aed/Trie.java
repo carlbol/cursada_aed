@@ -6,13 +6,13 @@ public class Trie<V,T> implements DictDigital<V,T> {
     private int size;
     
     private class Nodo{
-        ArrayList<Nodo> siguiente;
+        ListaEnlazada<Nodo> siguiente;
         T definicion;
         
         Nodo(){
-            siguiente = new ArrayList<Nodo>(256);
+            siguiente = new ListaEnlazada<Nodo>();
             for (int i=0; i<256; i++){
-                siguiente.add(null);
+                siguiente.agregarAtras(null);;
             }
         }
 
@@ -46,7 +46,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
             return x;
         }
         char c = clave.charAt(d);
-        return nodo_obtener(x.siguiente.get(c), clave, d+1);
+        return nodo_obtener(x.siguiente.obtener(c), clave, d+1);
     }
 
     public boolean esta(String clave){
@@ -73,9 +73,27 @@ public class Trie<V,T> implements DictDigital<V,T> {
             return x;
         }
         char c = clave.charAt(d);
-        Nodo nodo_a_definir = nodo_definir(x.siguiente.get(c), clave, valor, d+1);
-        x.siguiente.add(c,nodo_a_definir);
+        Nodo nodo_a_definir = nodo_definir(x.siguiente.obtener(c), clave, valor, d+1);
+        x.siguiente.modificarPosicion(c,nodo_a_definir);
         return x;
+    }
+
+    public ListaEnlazada<String> claves(){
+        ListaEnlazada lista_claves = new ListaEnlazada();
+        enlistar(this.raiz, "", lista_claves);
+        return lista_claves;
+    }
+
+    private void enlistar(Nodo x, String str, ListaEnlazada lista){
+        if (x == null){
+            return ;
+        }
+        if (x.definicion != null){
+            lista.agregarAtras(str);
+        }
+        for (char c = 0; c < 256; c++){
+            enlistar(x.siguiente.obtener(c), str+c, lista);
+        }
     }
 
 
@@ -84,5 +102,9 @@ public class Trie<V,T> implements DictDigital<V,T> {
         System.err.println(prueba.tamano());
         prueba.definir("guacamole", "9");
         System.err.println(prueba.obtener("guacamole"));
+        prueba.definir("guacamoles", "83");
+        System.err.println(prueba.obtener("guacamoles"));
+        System.err.println(prueba.claves());
+
     }
 }
