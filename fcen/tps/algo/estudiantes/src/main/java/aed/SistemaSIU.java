@@ -31,8 +31,15 @@ public class SistemaSIU {
                     carreras.definir(nombre_carrera, materias_carrera);
                     
                 }
+                DictDigital<String,Materia> dicAsociado = carreras.obtener(nombre_carrera);
                 //defino el nombre de la materia para una carrera
-                carreras.obtener(nombre_carrera).definir(nombre_materia, materia_nueva);
+                dicAsociado.definir(nombre_materia, materia_nueva);
+                //agrego a lista de materias vinculadas
+                dicAsociado.obtener(nombre_materia).agregarMateriaVinculada(dicAsociado, nombre_materia);
+               
+
+
+
             }
         }	    
     }
@@ -52,7 +59,17 @@ public class SistemaSIU {
     }
 
     public void cerrarMateria(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Materia materia_a_borrar = carreras.obtener(carrera).obtener(materia);
+        Secuencia<String> estudiantes = materia_a_borrar.estudiantes();
+        for (int i = 0;i < estudiantes.longitud();i++){
+            String estudiante = estudiantes.obtener(i);
+            int cant_materias_de_estudiante = libretas.obtener(estudiante);
+            libretas.definir(estudiante, cant_materias_de_estudiante-1);
+        }
+        for (int i = 0;i < materia_a_borrar.materiasVinculadas().longitud();i++){
+            String nombre_materia = materia_a_borrar.materiasVinculadas().obtener(i);
+            materia_a_borrar.carrerasVinculadas().obtener(i).borrar(nombre_materia);
+        }
     }
 
     public int inscriptos(String materia, String carrera){
@@ -60,9 +77,37 @@ public class SistemaSIU {
     }
 
     public boolean excedeCupo(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        int cant_profes = carreras.obtener(carrera).obtener(materia).plantelDocente()[0];
+        int cant_jtps = carreras.obtener(carrera).obtener(materia).plantelDocente()[1];
+        int cant_ay1 = carreras.obtener(carrera).obtener(materia).plantelDocente()[2];
+        int cant_ay2 = carreras.obtener(carrera).obtener(materia).plantelDocente()[3];
+        int cant_inscriptos = carreras.obtener(carrera).obtener(materia).cant_inscriptos();
+        int ratio_est_profe = cant_inscriptos/cant_profes;
+        int ratio_est_jtps = cant_inscriptos/cant_jtps;
+        int ratio_est_ay1 = cant_inscriptos/cant_ay1;
+        int ratio_est_ay2 = cant_inscriptos/cant_ay2;
+        return !(ratio_est_profe <= 250 || ratio_est_jtps <= 100 || ratio_est_ay1 <= 20 || ratio_est_ay2 <= 30);
+        
+
     }
 
+    public static void main(String[] args) {
+        
+        InfoMateria[] infoMaterias = new InfoMateria[] {
+            new InfoMateria(new ParCarreraMateria[] {new ParCarreraMateria("Ciencias de la Computación", "Intro a la Programación"), new ParCarreraMateria("Ciencias de Datos", "Algoritmos1")}),
+            new InfoMateria(new ParCarreraMateria[] {new ParCarreraMateria("Ciencias de la Computación", "Algoritmos"), new ParCarreraMateria("Ciencias de Datos", "Algoritmos2")}),
+            new InfoMateria(new ParCarreraMateria[] {new ParCarreraMateria("Ciencias de la Computación", "Técnicas de Diseño de Algoritmos"), new ParCarreraMateria("Ciencias de Datos", "Algoritmos3")}),
+            new InfoMateria(new ParCarreraMateria[] {new ParCarreraMateria("Ciencias de la Computación", "Análisis I"), new ParCarreraMateria("Ciencias de Datos", "Análisis I"), new ParCarreraMateria("Ciencias Físicas", "Matemática 1"), new ParCarreraMateria("Ciencias Químicas", "Análisis Matemático I"), new ParCarreraMateria("Ciencias Matemáticas", "Análisis I") }),
+            new InfoMateria(new ParCarreraMateria[] {new ParCarreraMateria("Ciencias Biológicas", "Química General e Inorgánica 1"), new ParCarreraMateria("Ciencias Químicas", "Química General")}),
+            new InfoMateria(new ParCarreraMateria[] {new ParCarreraMateria("Ciencias Matemáticas", "Análisis II"), new ParCarreraMateria("Ciencias de Datos", "Análisis II"), new ParCarreraMateria("Ciencias Físicas", "Matemática 3"), new ParCarreraMateria("Ciencias Químicas", "Análisis Matemático II")})
+        };
+      String[]  estudiantes = new String[] {"123/23", "321/24", "122/99", "314/81", "391/18", "478/19", "942/20", "291/18", "382/19", "892/22", "658/13", "217/12", "371/11", "294/20"};
+    
+      SistemaSIU sistema = new SistemaSIU(infoMaterias, estudiantes);
+
+    }
+
+    
     public String[] carreras(){
         Secuencia<String> listado = carreras.claves();    
         String[] listado_str = new String[listado.longitud()];

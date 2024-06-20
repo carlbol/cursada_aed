@@ -7,14 +7,31 @@ public class Materia {
     private int cantInscriptos;
     private Secuencia<String> estudiantes;
     private int[] docentes;
-    private Secuencia<Secuencia<String>> materiasVincualdas;
+    private Secuencia<DictDigital<String, Materia>> carrerasVinculadas;
+    private Secuencia<String> materiasVinculadas;
 
     public Materia(){
         cantInscriptos = 0;
         estudiantes = new ListaEnlazada<>();
-        materiasVincualdas = new ListaEnlazada<>();
+        carrerasVinculadas = new ListaEnlazada<>();
+        materiasVinculadas = new ListaEnlazada<>();
         docentes = new int[4];
     }
+
+    public void agregarMateriaVinculada(DictDigital<String, Materia> materias_de_carrera, String nombre_materia){
+           carrerasVinculadas.agregarAtras(materias_de_carrera);
+           materiasVinculadas.agregarAtras(nombre_materia);
+    }
+
+    public Secuencia<DictDigital<String, Materia>> carrerasVinculadas(){
+        return carrerasVinculadas;
+    }
+
+    public Secuencia<String> materiasVinculadas(){
+        return materiasVinculadas;
+    }
+
+
 
 
     public void inscribir(String libreta_universitaria){
@@ -43,6 +60,10 @@ public class Materia {
 
     public int[] plantelDocente(){
         return docentes;
+    }
+
+    public Secuencia<String> estudiantes(){
+        return estudiantes;
     }
 
 }

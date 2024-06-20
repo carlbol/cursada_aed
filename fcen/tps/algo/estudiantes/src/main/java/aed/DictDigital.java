@@ -12,5 +12,7 @@ public interface DictDigital<V,T> {
 
     public Secuencia<String> claves();
 
+    public void borrar(String materia);
+
 
 }
