@@ -1,6 +1,8 @@
 package aed;
 
 public class SistemaSIU {
+    private DictDigital<String, Integer> libretas;
+    private DictDigital<String, DictDigital<String,Materia>> carreras;
     
 
     enum CargoDocente{
@@ -11,7 +13,29 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        libretas = new Trie<>();
+        for (int i = 0; i < libretasUniversitarias.length;i++){
+            libretas.definir(libretasUniversitarias[i], 0);
+        }
+
+        carreras = new Trie<>();
+        for (int j = 0; j < infoMaterias.length;j++){
+            ParCarreraMateria[] nombres_materia = infoMaterias[j].getParesCarreraMateria();
+
+            for (int k = 0; k < nombres_materia.length;k++){
+                String nombre_carrera = nombres_materia[k].carrera;
+                String nombre_materia = nombres_materia[k].nombreMateria;
+                if (!carreras.esta(nombre_carrera)) {
+                    //defino la carrera si no lo está
+                    DictDigital<String,Materia> materias_carrera = new Trie<>();
+                    carreras.definir(nombre_carrera, materias_carrera);
+                    
+                }
+                //defino la materia
+                Materia materia_nueva = new Materia();
+                carreras.obtener(nombre_carrera).definir(nombre_materia, materia_nueva);
+            }
+        }	    
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
