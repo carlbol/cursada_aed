@@ -76,19 +76,27 @@ public class SistemaSIU {
         return carreras.obtener(carrera).obtener(materia).cant_inscriptos();	    
     }
 
-    public boolean excedeCupo(String materia, String carrera){
-        int cant_profes = carreras.obtener(carrera).obtener(materia).plantelDocente()[0];
-        int cant_jtps = carreras.obtener(carrera).obtener(materia).plantelDocente()[1];
-        int cant_ay1 = carreras.obtener(carrera).obtener(materia).plantelDocente()[2];
-        int cant_ay2 = carreras.obtener(carrera).obtener(materia).plantelDocente()[3];
-        int cant_inscriptos = carreras.obtener(carrera).obtener(materia).cant_inscriptos();
-        int ratio_est_profe = cant_inscriptos/cant_profes;
-        int ratio_est_jtps = cant_inscriptos/cant_jtps;
-        int ratio_est_ay1 = cant_inscriptos/cant_ay1;
-        int ratio_est_ay2 = cant_inscriptos/cant_ay2;
-        return !(ratio_est_profe <= 250 || ratio_est_jtps <= 100 || ratio_est_ay1 <= 20 || ratio_est_ay2 <= 30);
-        
+    public boolean excedeCupo(String materia, String carrera) {
+        final int ALUMNOS_POR_PROFESOR = 250;
+        final int ALUMNOS_POR_JTP = 100;
+        final int ALUMNOS_POR_AY1 = 20;
+        final int ALUMNOS_POR_AY2 = 30;
 
+        int cant_inscriptos = carreras.obtener(carrera).obtener(materia).cant_inscriptos();
+        int[] plantel = carreras.obtener(carrera).obtener(materia).plantelDocente();
+        int cant_profes = plantel[0];
+        int cant_jtps = plantel[1];
+        int cant_ay1 = plantel[2];
+        int cant_ay2 = plantel[3];
+    
+        boolean hay_suficientes_profes = cant_profes != 0 && (cant_inscriptos / (float) cant_profes) <= ALUMNOS_POR_PROFESOR;
+        boolean hay_suficientes_jtps = cant_jtps != 0 && (cant_inscriptos / (float) cant_jtps) <= ALUMNOS_POR_JTP;
+        boolean hay_suficientes_ay1 = cant_ay1 != 0 && (cant_inscriptos / (float) cant_ay1) <= ALUMNOS_POR_AY1;
+        boolean hay_suficientes_ay2 = cant_ay2 != 0 && (cant_inscriptos / (float) cant_ay2) <= ALUMNOS_POR_AY2;
+
+        if (cant_inscriptos == 0) return false;
+        if (hay_suficientes_profes && hay_suficientes_jtps && hay_suficientes_ay1 && hay_suficientes_ay2) return false;
+        return true;
     }
 
     public static void main(String[] args) {
