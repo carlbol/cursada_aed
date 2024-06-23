@@ -100,6 +100,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
     public String[] claves(){ // Claves en O().
         String[] lista_claves = new String[size];
         enlistar(this.raiz, "", lista_claves);
+        posicion = 0;
         return lista_claves;
     }
 
@@ -145,19 +146,4 @@ public class Trie<V,T> implements DictDigital<V,T> {
         return null;
     }
 
-
-    public static void main(String[] args) {
-        Trie<String,String> prueba = new Trie<>();
-        System.err.println(prueba.tamano());
-        prueba.definir("guacamole", "9");
-        System.err.println(prueba.obtener("guacamole"));
-        prueba.definir("guacamoles", "83");
-        System.err.println(prueba.obtener("guacamoles"));
-        prueba.definir("AGUA", "12");
-        prueba.definir("AGuA", "12");
-        prueba.definir("guarapo", "89");
-        System.err.println(prueba.claves()[4]);
-        System.err.println(prueba.tamano());
-
-    }
 }
