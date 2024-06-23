@@ -5,120 +5,139 @@ public class Trie<V,T> implements DictDigital<V,T> {
     private Nodo raiz;
     private int size;
     
-    private class Nodo{
+    // INVARIANTE:
+    // pred InvRep(t: Trie<V,T>) {
+    //    (t.size >= 0) y
+    //    (raiz = null ||
+    //    
+    //    raiz.siguiente es una lista enlazada de 256 Nodos
+    //    
+    //    para todo n de tipo Nodo perteneciente a t ->
+    //      para todo i,j de tipo ¿? i != j entonces n.siguiente[i] != n.siguiente[j]
+    //    
+    //    para todo n1, n2 de tipo Nodo diferentes y pertenecientes a t ->
+    //      no existe n3 de tipo Nodo tal que n3 pertenezca a n1.siguiente y a n2.siguiente al mismo tiempo
+    //    
+    //    no existe n de tipo Nodo tal que todas las posiciones de n.siguiente sean nulas y que n.definición también sea nulo. 
+    //    
+    //   t.size es igual a la cantidad de nodos con definición distinto a null.
+    //}
+
+    private class Nodo{ 
         ListaEnlazada<Nodo> siguiente;
         T definicion;
         
-        Nodo(){
-            siguiente = new ListaEnlazada<>();
+        Nodo(){                                       // Constructor de Nodo en O(1).
+            siguiente = new ListaEnlazada<>();        // O(1)
             for (int i=0; i<256; i++){
-                siguiente.agregarAtras(null);;
+                siguiente.agregarAtras(null);;   // O(1)
             }
         }
 
     }
-    public Trie(){
-        raiz = new Nodo();
-        size = 0;
+    public Trie(){           // Constructor de Trie en O(1).
+        raiz = new Nodo();   // O(1)
+        size = 0;            // O(1)
     }
-    public void diccionarioVacio(){
-        raiz = new Nodo();
-        size = 0;
-    }
-
-    public int tamano(){
-        return size;
+    public void diccionarioVacio(){ //Crear diccionario vacio en O(1)
+        raiz = new Nodo();  // O(1)
+        size = 0;           // O(1)
     }
 
-    public T obtener(String clave){
-        Nodo x = nodo_obtener(raiz, clave, 0);
-        if (x == null){
-            return null;
+    public int tamano(){    // Obtener el tamaño del trie en O(1).
+        return size;        // O(1)
+    }
+
+    public T obtener(String clave){ //Obtener en O(|clave|).
+        Nodo x = nodo_obtener(raiz, clave, 0);  //O(|clave|)
+        if (x == null){     // O(1)
+            return null;    // O(1)
         }
-        return x.definicion;
+        return x.definicion;    // O(1)
     }
 
-    private Nodo nodo_obtener(Nodo x, String clave, int d){
-        if (x == null){
-            return null;
+    private Nodo nodo_obtener(Nodo x, String clave, int d){  // Nodo_obtener en O(|clave|) por las llamadas recursivas.
+        if (x == null){     // O(1)
+            return null;    // O(1)
         }
-        if (d == clave.length()){
-            return x;
+        if (d == clave.length()){   // O(1)
+            return x;               // O(1)
         }
-        char c = clave.charAt(d);
-        return nodo_obtener(x.siguiente.obtener(c), clave, d+1);
+        char c = clave.charAt(d);   // O(1)
+        return nodo_obtener(x.siguiente.obtener(c), clave, d+1); // O(1) porque la lista está acotada.
     }
 
-    public boolean esta(String clave){
-        Nodo x = nodo_obtener(raiz, clave, 0);
-        if (x == null || x.definicion == null){
-            return false;
+    public boolean esta(String clave){            //Está en O(|clave|)
+        Nodo x = nodo_obtener(raiz, clave, 0);  // O(|clave|)
+        if (x == null || x.definicion == null){   // O(1)
+            return false;   // O(1)
         }
         else {
-            return true;
+            return true;    // O(1)
         }
     }
 
-    public void definir(String clave, T valor){
-        raiz = nodo_definir(raiz, clave, valor, 0);
-        size += 1;
+    public void definir(String clave, T valor){        // Definir en 
+        raiz = nodo_definir(raiz, clave, valor, 0);  // O(|clave|)
+        size += 1;                                     // O(1)
     }
 
-    private Nodo nodo_definir(Nodo x, String clave, T valor, int d){
-        if (x == null){
-            x = new Nodo();
+    private Nodo nodo_definir(Nodo x, String clave, T valor, int d){  // NodoDefinir en O(|clave|) 
+        if (x == null){                               // O(1)
+            x = new Nodo();                           // O(1)
         }
-        if (d == clave.length()){
-            x.definicion = valor;
-            return x;
-        }
-        char c = clave.charAt(d);
-        Nodo nodo_a_definir = nodo_definir(x.siguiente.obtener(c), clave, valor, d+1);
-        x.siguiente.modificarPosicion(c,nodo_a_definir);
-        return x;
+        if (d == clave.length()){                     // O(1)         
+            x.definicion = valor;                     // O(1)         
+            return x;                                 // O(1)         
+        }                                                             
+        char c = clave.charAt(d);                     // O(1)
+        Nodo nodo_a_definir = nodo_definir(x.siguiente.obtener(c), clave, valor, d+1);   // O(1) 
+        x.siguiente.modificarPosicion(c,nodo_a_definir);                                 // O(c) pero O(1) porque la lista está acotada por 256 caracteres. 
+        return x;                                     // O(1)
     }
 
-    public ListaEnlazada<String> claves(){
-        ListaEnlazada<String> lista_claves = new ListaEnlazada<>();
+    public ListaEnlazada<String> claves(){ // Claves en O().
+        ListaEnlazada<String> lista_claves = new ListaEnlazada<>(); // O(1)
         enlistar(this.raiz, "", lista_claves);
         return lista_claves;
     }
 
-    private void enlistar(Nodo x, String str, ListaEnlazada<String> lista){
-        if (x == null){
-            return ;
+    private void enlistar(Nodo x, String str, ListaEnlazada<String> lista){ // Charlarlo
+        if (x == null){ // O(1)  
+            return ;    // O(1) 
         }
-        if (x.definicion != null){
-            lista.agregarAtras(str);
+        if (x.definicion != null){   // O(1)
+            lista.agregarAtras(str); // O(1)
         }
-        for (char c = 0; c < 256; c++){
-            enlistar(x.siguiente.obtener(c), str+c, lista);
-        }
-    }
+        for (char c = 0; c < 256; c++){                     // Charlarlo
+            enlistar(x.siguiente.obtener(c), str+c, lista); // O(Sumatoria de la longitud de cada clave)
+        }                                                   // O(Sumatoria de la longitud de las clavas con significado y sin hijos)
+    }                                                       // Porque si existen las claves compu y computacion, 
+                                                            // el prefijo 'compu' se recorre una sola vez.
     
-    public void borrar(String clave){
+    public void borrar(String clave){ // Borrar en O(|clave|).
         raiz = borrar_nodo(raiz, clave, 0);
     }
 
-    private Nodo borrar_nodo(Nodo x, String clave, Integer d){
-        if (x == null){
-            return null;
+    private Nodo borrar_nodo(Nodo x, String clave, Integer d){  // Borrar nodo en O(|clave|).
+        if (x == null){  // O(1)
+            return null; // O(1)
         }
-        if (d == clave.length()){
-            x.definicion = null;
-            size -= 1;
+        if (d == clave.length()){ // O(1)
+            x.definicion = null;  // O(1)
+            size -= 1;            // O(1)
         }
         else {
-            char c = clave.charAt(d);
-            Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.obtener(c), clave, d+1);
-            x.siguiente.modificarPosicion(c, nodo_a_eliminar);
+            char c = clave.charAt(d); // O(1)
+            Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.obtener(c), clave, d+1); // O(|clave|)
+            x.siguiente.modificarPosicion(c, nodo_a_eliminar);                      // O(c) pero O(1) porque la lista está acotada por 256 caracteres. 
         }
-        if (x.definicion != null){
-            return x;
+        if (x.definicion != null){ // O(1)
+            return x;              // O(1)
         }
-        for (char c = 0; c < 256; c++){
-            if (x.siguiente.obtener(c)!=null){
-                return x;
+        for (char c = 0; c < 256; c++){         // O(1)
+            if (x.siguiente.obtener(c)!=null){  // O(1) porque la Lista está acotada por 256 caracteres.
+                return x;                       // O(1)
             }   
         }
         return null;

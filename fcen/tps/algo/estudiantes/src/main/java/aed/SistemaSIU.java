@@ -4,6 +4,23 @@ public class SistemaSIU {
     private DictDigital<String, Integer> libretas;
     private DictDigital<String, DictDigital<String,Materia>> carreras;
     
+    // INVARIANTE:
+    // pred InvRep(siu: SistemaSIU) {
+    //    
+    //    Para toda carrera y para toda materia:
+    //
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es una clave de carreras
+    //    
+    //    
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].materiasVinculadas es un nombre de la materia ...ver
+    //    
+    //    
+    //    siu.Carreras[carrera][materia].cantInscriptos es menor a la longitud de siu.libretas
+    //    
+    //    
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].estudiantes pertenece a siu.libretas
+    //    
+    //}
 
     enum CargoDocente{
         AY2,
@@ -13,90 +30,120 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
-        libretas = new Trie<>();
-        for (int i = 0; i < libretasUniversitarias.length;i++){
-            libretas.definir(libretasUniversitarias[i], 0);
+        libretas = new Trie<>();                                    // O(1)
+        for (int i = 0; i < libretasUniversitarias.length;i++){     // O(E) con E = cantidad de estudiantes
+            libretas.definir(libretasUniversitarias[i], 0);   // O(1) porque una libreta está acotada.
         }
+        // Hasta este punto la complejidad del SIU es O(E)
 
-        carreras = new Trie<>();
-        for (int j = 0; j < infoMaterias.length;j++){
-            ParCarreraMateria[] nombres_materia = infoMaterias[j].getParesCarreraMateria();
-            Materia materia_nueva = new Materia();
-            for (int k = 0; k < nombres_materia.length;k++){
-                String nombre_carrera = nombres_materia[k].carrera;
-                String nombre_materia = nombres_materia[k].nombreMateria;
-                if (!carreras.esta(nombre_carrera)) {
+        carreras = new Trie<>();                        // O(1)
+        for (int j = 0; j < infoMaterias.length;j++){   // Cantidad de materias - M
+            ParCarreraMateria[] nombres_materia = infoMaterias[j].getParesCarreraMateria();   // O(1)
+            Materia materia_nueva = new Materia();                                            // O(1)
+
+            for (int k = 0; k < nombres_materia.length;k++){ // Cantidad de nombres de materias - Mc
+                String nombre_carrera = nombres_materia[k].carrera;         // O(1)
+                String nombre_materia = nombres_materia[k].nombreMateria;   // O(1)
+
+                if (!carreras.esta(nombre_carrera)) {                       // O(|nombre_carrera|)
                     //defino la carrera si no lo está
-                    DictDigital<String,Materia> materias_carrera = new Trie<>();
-                    carreras.definir(nombre_carrera, materias_carrera);
+                    DictDigital<String,Materia> materias_carrera = new Trie<>();    // O(1)
+                    carreras.definir(nombre_carrera, materias_carrera);             // O(|nombre_carrera|) 
                     
                 }
-                DictDigital<String,Materia> dicAsociado = carreras.obtener(nombre_carrera);
+
+                DictDigital<String,Materia> dicAsociado = carreras.obtener(nombre_carrera); // O(|nombre_carrera|)
+
+                // Hasta este punto, se recorre la clave nombre_carrera 'cantMaterias' veces.
+                // Cumpliendo la complejidad de la sumatoria de |c| * |Mc| 
+                // donde c pertenece al conjunto de las Carreras y Mc es el conjunto de los nombres de materia de la carrera de grado c.
+
                 //defino el nombre de la materia para una carrera
-                dicAsociado.definir(nombre_materia, materia_nueva);
+                dicAsociado.definir(nombre_materia, materia_nueva); // O(|nombre_materia|)
+
                 //agrego a lista de materias vinculadas
-                dicAsociado.obtener(nombre_materia).agregarMateriaVinculada(dicAsociado, nombre_materia);
+                dicAsociado.obtener(nombre_materia).agregarMateriaVinculada(dicAsociado, nombre_materia); // O(|nombre_materia|) AgregarMateriaVinculada es O(1) entonces no afecta.
                
-
-
-
+                // Hasta este punto se recorren todos los nombres de una materia, que ciclando con el primer for,
+                // se terminan recorriendo todos los nombres de todas las materias.
+                // Cumpliendo con la complejidad de la doble sumatoria |n|
+                // Con n perteneciente al Nm (Conjunto de nombres de una materia m) y esto sucede 'cantMaterias' veces.
             }
-        }	    
+        }	    // Por lo tanto el constructor de SistemaSIU tiene la complejidad de 
+                // la sumatoria de |c| * |Mc| + la doble sumatoria |n| + E
     }
-
+    // O(|c| + |m|)
     public void inscribir(String estudiante, String carrera, String materia){
-        int cant_inscripciones = libretas.obtener(estudiante);
-        libretas.definir(estudiante, cant_inscripciones + 1);
-        carreras.obtener(carrera).obtener(materia).inscribir(estudiante);
+        int cant_inscripciones = libretas.obtener(estudiante); // O(1) porque la longitud de todas las libretas están acotadas.
+        libretas.definir(estudiante, cant_inscripciones + 1);  // O(1)
+        carreras.obtener(carrera).obtener(materia).inscribir(estudiante); // O(|carrera| + |materia|)
+        // Carreras.obtener(carrera) = O(|carrera|)    
+        // .obtener(Materia) = O(|materia|)    
+        // .cant_inscribir(estudiante) = O(1)
     }
 
+    // O(|c| + |m|)
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
         carreras.obtener(carrera).obtener(materia).agregarDocente(cargo);    
+        // Carreras.obtener(carrera) = O(|carrera|)    
+        // .obtener(Materia) = O(|materia|)    
+        // .agregarDocente(cargo) = O(1)
     }
 
+    // O(|c| + |m|)
     public int[] plantelDocente(String materia, String carrera){
         return carreras.obtener(carrera).obtener(materia).plantelDocente();    
+        // Carreras.obtener(carrera) = O(|carrera|)    
+        // .obtener(Materia) = O(|materia|)    
+        // .plantelDocente() = O(1)
     }
 
-    public void cerrarMateria(String materia, String carrera){
-        Materia materia_a_borrar = carreras.obtener(carrera).obtener(materia);
-        Secuencia<String> estudiantes = materia_a_borrar.estudiantes();
-        for (int i = 0;i < estudiantes.longitud();i++){
-            String estudiante = estudiantes.obtener(i);
-            int cant_materias_de_estudiante = libretas.obtener(estudiante);
-            libretas.definir(estudiante, cant_materias_de_estudiante-1);
-        }
-        for (int i = 0;i < materia_a_borrar.materiasVinculadas().longitud();i++){
-            String nombre_materia = materia_a_borrar.materiasVinculadas().obtener(i);
-            materia_a_borrar.carrerasVinculadas().obtener(i).borrar(nombre_materia);
-        }
-    }
-
-    public int inscriptos(String materia, String carrera){
-        return carreras.obtener(carrera).obtener(materia).cant_inscriptos();	    
-    }
-
-    public boolean excedeCupo(String materia, String carrera) {
-        final int ALUMNOS_POR_PROFESOR = 250;
-        final int ALUMNOS_POR_JTP = 100;
-        final int ALUMNOS_POR_AY1 = 20;
-        final int ALUMNOS_POR_AY2 = 30;
-
-        int cant_inscriptos = carreras.obtener(carrera).obtener(materia).cant_inscriptos();
-        int[] plantel = carreras.obtener(carrera).obtener(materia).plantelDocente();
-        int cant_profes = plantel[0];
-        int cant_jtps = plantel[1];
-        int cant_ay1 = plantel[2];
-        int cant_ay2 = plantel[3];
     
-        boolean hay_suficientes_profes = cant_profes != 0 && (cant_inscriptos / (float) cant_profes) <= ALUMNOS_POR_PROFESOR;
-        boolean hay_suficientes_jtps = cant_jtps != 0 && (cant_inscriptos / (float) cant_jtps) <= ALUMNOS_POR_JTP;
-        boolean hay_suficientes_ay1 = cant_ay1 != 0 && (cant_inscriptos / (float) cant_ay1) <= ALUMNOS_POR_AY1;
-        boolean hay_suficientes_ay2 = cant_ay2 != 0 && (cant_inscriptos / (float) cant_ay2) <= ALUMNOS_POR_AY2;
+    public void cerrarMateria(String materia, String carrera){
+        Materia materia_a_borrar = carreras.obtener(carrera).obtener(materia); // O(|carrera| + |materia|)
+        Secuencia<String> estudiantes = materia_a_borrar.estudiantes();  // O(1)     
+        for (int i = 0;i < estudiantes.longitud();i++){ // O(|estudiantes|)
+            String estudiante = estudiantes.obtener(i); // O(|estudiantes|)
+            int cant_materias_de_estudiante = libretas.obtener(estudiante);  // O(1) porque la longitud de cada libreta está acotada.
+            libretas.definir(estudiante, cant_materias_de_estudiante-1);     // O(1) porque la longitud de cada libreta está acotada.
+        }
+        for (int i = 0;i < materia_a_borrar.materiasVinculadas().longitud();i++){ //materiasVinculadas es O(1) y .longitud() es O(1) -> O(1) + O(|materiasVinculadas|)
+            String nombre_materia = materia_a_borrar.materiasVinculadas().obtener(i); // O(|materiasVinculadas|)
+            materia_a_borrar.carrerasVinculadas().obtener(i).borrar(nombre_materia); // carrerasVinculadas es O(1), .obtener es O(|materiasVinculadas|), .borrar
+        }
+    }
 
-        if (cant_inscriptos == 0) return false;
-        if (hay_suficientes_profes && hay_suficientes_jtps && hay_suficientes_ay1 && hay_suficientes_ay2) return false;
-        return true;
+    // O(|c| + |m|)
+    public int inscriptos(String materia, String carrera){
+        return carreras.obtener(carrera).obtener(materia).cant_inscriptos();  // O(|carrera| + |materia|)
+        // Carreras.obtener(carrera) = O(|carrera|)    
+        // .obtener(Materia) = O(|materia|)    
+        // .cant_inscriptos() = O(1)
+    }
+
+    // O(|c| + |m|)
+    public boolean excedeCupo(String materia, String carrera) {
+        final int ALUMNOS_POR_PROFESOR = 250; // O(1)       // Usar final es legal?
+        final int ALUMNOS_POR_JTP = 100;      // O(1) 
+        final int ALUMNOS_POR_AY1 = 20;       // O(1)
+        final int ALUMNOS_POR_AY2 = 30;       // O(1)
+
+        // usar funcion incriptos y plantelDocente porque ya lo tenemos, pero es lo mismo
+        int cant_inscriptos = carreras.obtener(carrera).obtener(materia).cant_inscriptos(); // O(|carrera| + |materia|)
+        int[] plantel = carreras.obtener(carrera).obtener(materia).plantelDocente();        // O(|carrera| + |materia|)
+        int cant_profes = plantel[0]; // O(1)
+        int cant_jtps = plantel[1];   // O(1)  
+        int cant_ay1 = plantel[2];    // O(1)  
+        int cant_ay2 = plantel[3];    // O(1)  
+                                                                    // Suponiendo que el cast a float es O(1)
+        boolean hay_suficientes_profes = cant_profes != 0 && (cant_inscriptos / (float) cant_profes) <= ALUMNOS_POR_PROFESOR; // O(1)
+        boolean hay_suficientes_jtps = cant_jtps != 0 && (cant_inscriptos / (float) cant_jtps) <= ALUMNOS_POR_JTP;            // O(1)
+        boolean hay_suficientes_ay1 = cant_ay1 != 0 && (cant_inscriptos / (float) cant_ay1) <= ALUMNOS_POR_AY1;               // O(1)
+        boolean hay_suficientes_ay2 = cant_ay2 != 0 && (cant_inscriptos / (float) cant_ay2) <= ALUMNOS_POR_AY2;               // O(1)
+
+        if (cant_inscriptos == 0) return false; // O(1)
+        if (hay_suficientes_profes && hay_suficientes_jtps && hay_suficientes_ay1 && hay_suficientes_ay2) return false;     // O(1)
+        return true;  // O(1)
     }
 
     public static void main(String[] args) {
@@ -115,19 +162,20 @@ public class SistemaSIU {
 
     }
 
-    
+    // O(Sumatoria de logitud de cada carrera).
     public String[] carreras(){
-        Secuencia<String> listado = carreras.claves();    
-        String[] listado_str = new String[listado.longitud()];
-        for (int i = 0; i < listado.longitud();i++){
-            listado_str[i] = listado.obtener(i);
+        Secuencia<String> listado = carreras.claves();    // deberia ser O(longitud de la carrera mas larga)
+        String[] listado_str = new String[listado.longitud()]; // O(1)
+        for (int i = 0; i < listado.longitud();i++){ // O(cant carreras)
+            listado_str[i] = listado.obtener(i); // O(i) 
+            //listado_str[i] = listado[i];
         }
         return listado_str;
     }
 
-    public String[] materias(String carrera){
-        
-        Secuencia<String> listado = carreras.obtener(carrera).claves(); 
+    public String[] materias(String carrera){  // Mismo problema que en carreras.clave().
+
+        Secuencia<String> listado = carreras.obtener(carrera).claves(); // ver complejidad de .claves():
         String[] listado_str = new String[listado.longitud()];
         for (int i = 0; i < listado.longitud();i++){
             listado_str[i] = listado.obtener(i);
@@ -135,7 +183,9 @@ public class SistemaSIU {
         return listado_str;  
     }
 
-    public int materiasInscriptas(String estudiante){
+    // O(1)
+    public int materiasInscriptas(String estudiante){ // Materias Inscriptas en O(1)
         return libretas.obtener(estudiante);    
+        // libretas.obtener es O(1) porque la longitud de cada libreta está acotada.
     }
 }

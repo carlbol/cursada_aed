@@ -1,14 +1,19 @@
 package aed;
 
 public class InfoMateria{
-
     private ParCarreraMateria[] paresCarreraMateria;
+    
+    // INVARIANTE:
+    // pred InvRep(i: InfoMateria<ParCarreraMateria>) { ** charlar si es i: InfoMateria solo.
+    //    i.ParesCarreraMateria != null 
+    //}
 
-    public InfoMateria(ParCarreraMateria[] paresCarreraMateria){
-        this.paresCarreraMateria = paresCarreraMateria;
+
+    public InfoMateria(ParCarreraMateria[] paresCarreraMateria){ // Constructor en O(1)
+        this.paresCarreraMateria = paresCarreraMateria;          // O(1)
     }
 
-    public ParCarreraMateria[] getParesCarreraMateria() {
-        return this.paresCarreraMateria;
+    public ParCarreraMateria[] getParesCarreraMateria() {       // GET ParesCarreraMateria en O(1)
+        return this.paresCarreraMateria;                        // O(1)
     }
 }
