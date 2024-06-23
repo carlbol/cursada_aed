@@ -9,21 +9,12 @@ public class Trie<V,T> implements DictDigital<V,T> {
     // INVARIANTE:
     // pred InvRep(t: Trie<V,T>) {
     //    (t.size >= 0) y
-    //    (raiz = null ||
-    //    
-    //    raiz.siguiente es una lista enlazada de 256 Nodos
-    //    
-    //    para todo n de tipo Nodo perteneciente a t ->
-    //      para todo i,j de tipo ¿? i != j entonces n.siguiente[i] != n.siguiente[j]
-    //    
-    //    para todo n1, n2 de tipo Nodo diferentes y pertenecientes a t ->
-    //      no existe n3 de tipo Nodo tal que n3 pertenezca a n1.siguiente y a n2.siguiente al mismo tiempo
-    //    
-    //    no existe n de tipo Nodo tal que todas las posiciones de n.siguiente sean nulas y que n.definición también sea nulo. 
-    //    
-    //   t.size es igual a la cantidad de nodos con definición distinto a null.
-    //   
-    //   t.posicion es igual a 0
+    //    (raiz = null || raiz.siguiente es una lista enlazada de 256 Nodos) y
+    //    (para todo n1, n2 de tipo Nodo diferentes y pertenecientes a t ->
+    //      no existe n3 de tipo Nodo tal que n3 esté a n1.siguiente y a n2.siguiente al mismo tiempo) y
+    //     (no existe n de tipo Nodo tal que todas las posiciones de n.siguiente sean nulas y que n.definición también sea nulo) y 
+    //      t.size es igual a la cantidad de nodos con definición distinto a null y
+    //     t.posicion es igual a 0
     //}
 
     private class Nodo{ 
@@ -33,7 +24,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
         Nodo(){                                       // Constructor de Nodo en O(1).
             siguiente = new ListaEnlazada<>();        // O(1)
             for (int i=0; i<256; i++){
-                siguiente.agregarAtras(null);;   // O(1)
+                siguiente.agregarAtras(null);;   // O(1) porque está acotado en 256 posiciones
             }
         }
 
@@ -67,7 +58,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
             return x;               // O(1)
         }
         char c = clave.charAt(d);   // O(1)
-        return nodo_obtener(x.siguiente.obtener(c), clave, d+1); // O(1) porque la lista está acotada.
+        return nodo_obtener(x.siguiente.obtener(c), clave, d+1); // O(|clave|) pues en el peor caso van a haber tantas llamadas recursivas como caracteres de la clave
     }
 
     public boolean esta(String clave){            //Está en O(|clave|)
@@ -101,14 +92,14 @@ public class Trie<V,T> implements DictDigital<V,T> {
 
     
 
-    public String[] claves(){ // Claves en O().
+    public String[] claves(){                       // Claves en O(Sumatoria de la longitud de cada clave).
         String[] lista_claves = new String[size];   //O(1)
         enlistar(this.raiz, "", lista_claves);  //O(Sumatoria de la longitud de cada clave)
         posicion = 0;                               //O(1)
         return lista_claves;                        //O(1)
     }
 
-    private void enlistar(Nodo x, String str, String[] lista){ // Charlarlo
+    private void enlistar(Nodo x, String str, String[] lista){
         if (x == null){ // O(1)  
             return ;    // O(1) 
         }
@@ -116,11 +107,10 @@ public class Trie<V,T> implements DictDigital<V,T> {
             lista[posicion] = str;   // O(1)
             posicion += 1;           // O(1)  
         }
-        for (char c = 0; c < 256; c++){                     // Charlarlo
+        for (char c = 0; c < 256; c++){                     
             enlistar(x.siguiente.obtener(c), str+c, lista); // O(Sumatoria de la longitud de cada clave)
-        }                                                   // O(Sumatoria de la longitud de las clavas con significado y sin hijos)
-    }                                                       // Porque si existen las claves compu y computacion, 
-                                                            // el prefijo 'compu' se recorre una sola vez.
+        }                                                   
+    }                                                       
     
     public void borrar(String clave){ // Borrar en O(|clave|).
         raiz = borrar_nodo(raiz, clave, 0);

@@ -9,13 +9,12 @@ public class SistemaSIU {
     //    
     //    Para toda carrera y para toda materia:
     //
-    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es una clave de carreras (creo que esto no es cierto)
-    //    siu.Carreras[carrera][materia].carrerasVinculadas es una lista de diccionarios digitales cuyas claves tienen significado de tipo Materia.
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es s un trie cuyas claves tienen como significado una Materia
     //    
-    //    Todo elemento en la lista siu.Carreras[carrera][materia].materiasVinculadas es un nombre de la materia ...ver
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].materiasVinculadas es un nombre de la materia
     //    
     //    
-    //    siu.Carreras[carrera][materia].cantInscriptos <= |siu.libretas.claves()|
+    //    siu.Carreras[carrera][materia].cantInscriptos es menor o igual a |siu.libretas.claves()|
     //    
     //    
     //    Todo elemento en la lista siu.Carreras[carrera][materia].estudiantes pertenece a siu.libretas
@@ -101,7 +100,7 @@ public class SistemaSIU {
     }
 
     
-    public void cerrarMateria(String materia, String carrera){
+    public void cerrarMateria(String materia, String carrera){ //O(|c| + |m| + SUM_n_de_Nm |n| + |e|)
         Materia materia_a_borrar = carreras.obtener(carrera).obtener(materia); // O(|carrera| + |materia|)
         Secuencia<String> estudiantes = materia_a_borrar.estudiantes();  // O(1)     
         for (int i = 0;i < estudiantes.longitud();i++){ // O(|estudiantes|)
@@ -111,8 +110,8 @@ public class SistemaSIU {
         }
         for (int i = 0;i < materia_a_borrar.materiasVinculadas().longitud();i++){ //materiasVinculadas es O(1) y .longitud() es O(1) -> O(1) + O(|materiasVinculadas|)
             String nombre_materia = materia_a_borrar.materiasVinculadas().obtener(i); // O(|materiasVinculadas|)
-            materia_a_borrar.carrerasVinculadas().obtener(i).borrar(nombre_materia); // carrerasVinculadas es O(1), .obtener es O(|materiasVinculadas|), .borrar
-        }
+            materia_a_borrar.carrerasVinculadas().obtener(i).borrar(nombre_materia); // carrerasVinculadas es O(1), .obtener es O(|materiasVinculadas|), .borrar O(|clave|)
+        } // la complejidad de este for entonces es O(Sumatoria de la |n| que componen los Nombres de la materia a borrar)
     }
 
     // O(|c| + |m|)
@@ -125,19 +124,18 @@ public class SistemaSIU {
 
     // O(|c| + |m|)
     public boolean excedeCupo(String materia, String carrera) {
-        final int ALUMNOS_POR_PROFESOR = 250; // O(1)       // Usar final es legal?
-        final int ALUMNOS_POR_JTP = 100;      // O(1) 
-        final int ALUMNOS_POR_AY1 = 20;       // O(1)
-        final int ALUMNOS_POR_AY2 = 30;       // O(1)
+        int ALUMNOS_POR_PROFESOR = 250; // O(1)       
+        int ALUMNOS_POR_JTP = 100;      // O(1) 
+        int ALUMNOS_POR_AY1 = 20;       // O(1)
+        int ALUMNOS_POR_AY2 = 30;       // O(1)
 
-        // usar funcion incriptos y plantelDocente porque ya lo tenemos, pero es lo mismo
         int cant_inscriptos = carreras.obtener(carrera).obtener(materia).cant_inscriptos(); // O(|carrera| + |materia|)
         int[] plantel = carreras.obtener(carrera).obtener(materia).plantelDocente();        // O(|carrera| + |materia|)
         int cant_profes = plantel[0]; // O(1)
         int cant_jtps = plantel[1];   // O(1)  
         int cant_ay1 = plantel[2];    // O(1)  
         int cant_ay2 = plantel[3];    // O(1)  
-                                                                    // Suponiendo que el cast a float es O(1)
+                                                                    
         boolean hay_suficientes_profes = cant_profes != 0 && (cant_inscriptos / (float) cant_profes) <= ALUMNOS_POR_PROFESOR; // O(1)
         boolean hay_suficientes_jtps = cant_jtps != 0 && (cant_inscriptos / (float) cant_jtps) <= ALUMNOS_POR_JTP;            // O(1)
         boolean hay_suficientes_ay1 = cant_ay1 != 0 && (cant_inscriptos / (float) cant_ay1) <= ALUMNOS_POR_AY1;               // O(1)
