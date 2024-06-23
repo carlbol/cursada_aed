@@ -19,8 +19,8 @@ public class Materia {
     //    la longitud de m.carrerasVinculadas es igual a m.materiasVinculadas
     //    
     //    ¿habría que hablar de que en carrerasVinculadas son trie?
-    //    
-    //    
+    //    creo que hay que explicitar: Para todo elemento i en carrerasVinculadas existe una Materia
+    //    carrerasVinculadas[i].obtener(materiasVinculadas[i])
     //    
     //   
     //}

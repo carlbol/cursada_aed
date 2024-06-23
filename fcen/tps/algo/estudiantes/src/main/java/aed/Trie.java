@@ -4,7 +4,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
 
     private Nodo raiz;
     private int size;
-    private int posicion;
+    private int posicion = 0;
     
     // INVARIANTE:
     // pred InvRep(t: Trie<V,T>) {
@@ -22,6 +22,8 @@ public class Trie<V,T> implements DictDigital<V,T> {
     //    no existe n de tipo Nodo tal que todas las posiciones de n.siguiente sean nulas y que n.definición también sea nulo. 
     //    
     //   t.size es igual a la cantidad de nodos con definición distinto a null.
+    //   
+    //   t.posicion es igual a 0
     //}
 
     private class Nodo{ 
@@ -92,16 +94,18 @@ public class Trie<V,T> implements DictDigital<V,T> {
             return x;                                 // O(1)         
         }                                                             
         char c = clave.charAt(d);                     // O(1)
-        Nodo nodo_a_definir = nodo_definir(x.siguiente.obtener(c), clave, valor, d+1);   // O(1) 
-        x.siguiente.modificarPosicion(c,nodo_a_definir);                                 // O(c) pero O(1) porque la lista está acotada por 256 caracteres. 
+        Nodo nodo_a_definir = nodo_definir(x.siguiente.obtener(c), clave, valor, d+1);   // O(|clave|)
+        x.siguiente.modificarPosicion(c,nodo_a_definir);                                 // O(1) porque la lista está acotada por 256 caracteres. 
         return x;                                     // O(1)
     }
 
+    
+
     public String[] claves(){ // Claves en O().
-        String[] lista_claves = new String[size];
-        enlistar(this.raiz, "", lista_claves);
-        posicion = 0;
-        return lista_claves;
+        String[] lista_claves = new String[size];   //O(1)
+        enlistar(this.raiz, "", lista_claves);  //O(Sumatoria de la longitud de cada clave)
+        posicion = 0;                               //O(1)
+        return lista_claves;                        //O(1)
     }
 
     private void enlistar(Nodo x, String str, String[] lista){ // Charlarlo
@@ -133,7 +137,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
         else {
             char c = clave.charAt(d); // O(1)
             Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.obtener(c), clave, d+1); // O(|clave|)
-            x.siguiente.modificarPosicion(c, nodo_a_eliminar);                      // O(c) pero O(1) porque la lista está acotada por 256 caracteres. 
+            x.siguiente.modificarPosicion(c, nodo_a_eliminar);                      // O(1) porque la lista está acotada por 256 caracteres. 
         }
         if (x.definicion != null){ // O(1)
             return x;              // O(1)

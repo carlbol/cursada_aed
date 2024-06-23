@@ -9,16 +9,18 @@ public class SistemaSIU {
     //    
     //    Para toda carrera y para toda materia:
     //
-    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es una clave de carreras
-    //    
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es una clave de carreras (creo que esto no es cierto)
+    //    siu.Carreras[carrera][materia].carrerasVinculadas es una lista de diccionarios digitales cuyas claves tienen significado de tipo Materia.
     //    
     //    Todo elemento en la lista siu.Carreras[carrera][materia].materiasVinculadas es un nombre de la materia ...ver
     //    
     //    
-    //    siu.Carreras[carrera][materia].cantInscriptos es menor a la longitud de siu.libretas
+    //    siu.Carreras[carrera][materia].cantInscriptos <= |siu.libretas.claves()|
     //    
     //    
     //    Todo elemento en la lista siu.Carreras[carrera][materia].estudiantes pertenece a siu.libretas
+    //
+    //   
     //    
     //}
 
@@ -147,14 +149,14 @@ public class SistemaSIU {
     }
 
 
-    // O(Sumatoria de logitud de cada carrera).
+    
     public String[] carreras(){
-        return carreras.claves();
+        return carreras.claves(); // O(Sumatoria de logitud de cada carrera)
     }
 
-    public String[] materias(String carrera){  // Mismo problema que en carreras.clave().
+    public String[] materias(String carrera){  
 
-        return carreras.obtener(carrera).claves();
+        return carreras.obtener(carrera).claves(); //O(|carrera| + Sumatoria de logitud de cada materia)
     }
 
     
