@@ -110,7 +110,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
             lista.agregarAtras(str); // O(1)
         }
         for (char c = 0; c < 256; c++){
-            enlistar(x.siguiente.obtener(c), str+c, lista); // O(mucho) Charlarlo
+            enlistar(x.siguiente.obtener(c), str+c, lista); // O(mucho) Charlarlo pondria O(SUM de |claves|)
         }
     }
     

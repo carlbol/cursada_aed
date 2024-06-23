@@ -4,6 +4,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
 
     private Nodo raiz;
     private int size;
+    private int posicion;
     
     // INVARIANTE:
     // pred InvRep(t: Trie<V,T>) {
@@ -96,18 +97,19 @@ public class Trie<V,T> implements DictDigital<V,T> {
         return x;                                     // O(1)
     }
 
-    public ListaEnlazada<String> claves(){ // Claves en O().
-        ListaEnlazada<String> lista_claves = new ListaEnlazada<>(); // O(1)
+    public String[] claves(){ // Claves en O().
+        String[] lista_claves = new String[size];
         enlistar(this.raiz, "", lista_claves);
         return lista_claves;
     }
 
-    private void enlistar(Nodo x, String str, ListaEnlazada<String> lista){ // Charlarlo
+    private void enlistar(Nodo x, String str, String[] lista){ // Charlarlo
         if (x == null){ // O(1)  
             return ;    // O(1) 
         }
         if (x.definicion != null){   // O(1)
-            lista.agregarAtras(str); // O(1)
+            lista[posicion] = str;   // O(1)
+            posicion += 1;           // O(1)  
         }
         for (char c = 0; c < 256; c++){                     // Charlarlo
             enlistar(x.siguiente.obtener(c), str+c, lista); // O(Sumatoria de la longitud de cada clave)
@@ -154,9 +156,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
         prueba.definir("AGUA", "12");
         prueba.definir("AGuA", "12");
         prueba.definir("guarapo", "89");
-        prueba.borrar("AGUA");
-        prueba.borrar("guarapo");
-        System.err.println(prueba.claves());
+        System.err.println(prueba.claves()[4]);
         System.err.println(prueba.tamano());
 
     }

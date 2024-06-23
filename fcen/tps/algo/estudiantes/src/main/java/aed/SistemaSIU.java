@@ -164,26 +164,15 @@ public class SistemaSIU {
 
     // O(Sumatoria de logitud de cada carrera).
     public String[] carreras(){
-        Secuencia<String> listado = carreras.claves();    // deberia ser O(longitud de la carrera mas larga)
-        String[] listado_str = new String[listado.longitud()]; // O(1)
-        for (int i = 0; i < listado.longitud();i++){ // O(cant carreras)
-            listado_str[i] = listado.obtener(i); // O(i) 
-            //listado_str[i] = listado[i];
-        }
-        return listado_str;
+        return carreras.claves();
     }
 
     public String[] materias(String carrera){  // Mismo problema que en carreras.clave().
 
-        Secuencia<String> listado = carreras.obtener(carrera).claves(); // ver complejidad de .claves():
-        String[] listado_str = new String[listado.longitud()];
-        for (int i = 0; i < listado.longitud();i++){
-            listado_str[i] = listado.obtener(i);
-        }
-        return listado_str;  
+        return carreras.obtener(carrera).claves();
     }
 
-    // O(1)
+    
     public int materiasInscriptas(String estudiante){ // Materias Inscriptas en O(1)
         return libretas.obtener(estudiante);    
         // libretas.obtener es O(1) porque la longitud de cada libreta está acotada.
