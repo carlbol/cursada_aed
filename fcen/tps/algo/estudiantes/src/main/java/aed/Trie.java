@@ -18,13 +18,13 @@ public class Trie<V,T> implements DictDigital<V,T> {
     //}
 
     private class Nodo{ 
-        ListaEnlazada<Nodo> siguiente;
+        ArrayList<Nodo> siguiente;
         T definicion;
         
-        Nodo(){                                       // Constructor de Nodo en O(1).
-            siguiente = new ListaEnlazada<>();        // O(1)
-            for (int i=0; i<256; i++){
-                siguiente.agregarAtras(null);;   // O(1) porque está acotado en 256 posiciones
+        Nodo(){                                      // Constructor de Nodo en O(1).
+            siguiente = new ArrayList<>(256);        // O(1)
+             for (int i=0; i<256; i++){              // O(1) porque está acotado en 256 posiciones
+                siguiente.add(null);;   
             }
         }
 
@@ -58,7 +58,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
             return x;               // O(1)
         }
         char c = clave.charAt(d);   // O(1)
-        return nodo_obtener(x.siguiente.obtener(c), clave, d+1); // O(|clave|) pues en el peor caso van a haber tantas llamadas recursivas como caracteres de la clave
+        return nodo_obtener(x.siguiente.get(c), clave, d+1); // O(|clave|) pues en el peor caso van a haber tantas llamadas recursivas como caracteres de la clave
     }
 
     public boolean esta(String clave){            //Está en O(|clave|)
@@ -85,8 +85,8 @@ public class Trie<V,T> implements DictDigital<V,T> {
             return x;                                 // O(1)         
         }                                                             
         char c = clave.charAt(d);                     // O(1)
-        Nodo nodo_a_definir = nodo_definir(x.siguiente.obtener(c), clave, valor, d+1);   // O(|clave|)
-        x.siguiente.modificarPosicion(c,nodo_a_definir);                                 // O(1) porque la lista está acotada por 256 caracteres. 
+        Nodo nodo_a_definir = nodo_definir(x.siguiente.get(c), clave, valor, d+1);   // O(|clave|)
+        x.siguiente.set(c,nodo_a_definir);                                 // O(1) porque la lista está acotada por 256 caracteres. 
         return x;                                     // O(1)
     }
 
@@ -108,7 +108,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
             posicion += 1;           // O(1)  
         }
         for (char c = 0; c < 256; c++){                     
-            enlistar(x.siguiente.obtener(c), str+c, lista); // O(Sumatoria de la longitud de cada clave)
+            enlistar(x.siguiente.get(c), str+c, lista); // O(Sumatoria de la longitud de cada clave)
         }                                                   
     }                                                       
     
@@ -126,14 +126,14 @@ public class Trie<V,T> implements DictDigital<V,T> {
         }
         else {
             char c = clave.charAt(d); // O(1)
-            Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.obtener(c), clave, d+1); // O(|clave|)
-            x.siguiente.modificarPosicion(c, nodo_a_eliminar);                      // O(1) porque la lista está acotada por 256 caracteres. 
+            Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.get(c), clave, d+1); // O(|clave|)
+            x.siguiente.set(c, nodo_a_eliminar);                      // O(1) porque la lista está acotada por 256 caracteres. 
         }
         if (x.definicion != null){ // O(1)
             return x;              // O(1)
         }
         for (char c = 0; c < 256; c++){         // O(1)
-            if (x.siguiente.obtener(c)!=null){  // O(1) porque la Lista está acotada por 256 caracteres.
+            if (x.siguiente.get(c)!=null){  // O(1) porque la Lista está acotada por 256 caracteres.
                 return x;                       // O(1)
             }   
         }
