@@ -9,18 +9,13 @@ public class SistemaSIU {
     //    
     //    Para toda carrera y para toda materia:
     //
-    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es s un trie cuyas claves tienen como significado una Materia
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].carrerasVinculadas es un trie cuyas claves tienen como significado una Materia y
     //    
-    //    Todo elemento en la lista siu.Carreras[carrera][materia].materiasVinculadas es un nombre de la materia
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].materiasVinculadas es un nombre de la materia y
     //    
+    //    siu.Carreras[carrera][materia].cantInscriptos es menor o igual a |siu.libretas.claves()| y
     //    
-    //    siu.Carreras[carrera][materia].cantInscriptos es menor o igual a |siu.libretas.claves()|
-    //    
-    //    
-    //    Todo elemento en la lista siu.Carreras[carrera][materia].estudiantes pertenece a siu.libretas
-    //
-    //   
-    //    
+    //    Todo elemento en la lista siu.Carreras[carrera][materia].estudiantes pertenece a siu.libretas 
     //}
 
     enum CargoDocente{
@@ -103,16 +98,23 @@ public class SistemaSIU {
     public void cerrarMateria(String materia, String carrera){ //O(|c| + |m| + SUM_n_de_Nm |n| + |e|)
         Materia materia_a_borrar = carreras.obtener(carrera).obtener(materia); // O(|carrera| + |materia|)
         Secuencia<String> estudiantes = materia_a_borrar.estudiantes();  // O(1)     
-        for (int i = 0;i < estudiantes.longitud();i++){ // O(|estudiantes|)
-            String estudiante = estudiantes.obtener(i); // O(|estudiantes|)
+        while (estudiantes.longitud() > 0){ // O(|estudiantes|)
+            String estudiante = estudiantes.sacarPrimero(); // *Corrección* O(|1|)  
             int cant_materias_de_estudiante = libretas.obtener(estudiante);  // O(1) porque la longitud de cada libreta está acotada.
             libretas.definir(estudiante, cant_materias_de_estudiante-1);     // O(1) porque la longitud de cada libreta está acotada.
         }
-        for (int i = 0;i < materia_a_borrar.materiasVinculadas().longitud();i++){ //materiasVinculadas es O(1) y .longitud() es O(1) -> O(1) + O(|materiasVinculadas|)
-            String nombre_materia = materia_a_borrar.materiasVinculadas().obtener(i); // O(|materiasVinculadas|)
-            materia_a_borrar.carrerasVinculadas().obtener(i).borrar(nombre_materia); // carrerasVinculadas es O(1), .obtener es O(|materiasVinculadas|), .borrar O(|clave|)
+        while (materia_a_borrar.materiasVinculadas().longitud() > 0){ //materiasVinculadas es O(1) y .longitud() es O(1) -> O(1) + O(|materiasVinculadas|)
+            String nombre_materia = materia_a_borrar.materiasVinculadas().sacarPrimero(); // *Corrección* O(|1|)
+            materia_a_borrar.carrerasVinculadas().sacarPrimero().borrar(nombre_materia); // *Corrección* carrerasVinculadas es O(1), .sacarPrimero es O(1), .borrar O(|clave|)
         } // la complejidad de este for entonces es O(Sumatoria de la |n| que componen los Nombres de la materia a borrar)
     }
+
+    /*Para evitar el uso de .obtener() -que suponía recorrer las listas enlazadas con un costo de orden O(n)-
+     optamos por el uso de la operación .sacarPrimero que retorna el primer valor de una lista enlazada
+    
+     */
+
+
 
     // O(|c| + |m|)
     public int inscriptos(String materia, String carrera){

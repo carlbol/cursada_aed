@@ -9,6 +9,7 @@ public class ListaEnlazada<T> implements Secuencia<T> {
 
     // Invariante:
     // pred InvRep(l: ListaEnlazada<T>) {
+    //    No pueden haber ciclos, size es igual a la cantadad de nodos y
     //    size >= 0 && 
     //    (
     //      (size == 0 && primero == null && ultimo == null) || 
@@ -77,34 +78,38 @@ public class ListaEnlazada<T> implements Secuencia<T> {
 
   
 
-    public T obtener(int i) {                       // Obtener en O(i).
-        Nodo actual = new Nodo(null);      // O(1)
+    public T obtener(int i) {                       // Obtener en O(n).
+        Nodo actual = new Nodo(null);               // O(1)
         actual = primero;                           // O(1)
         int contador = 0;                           // O(1)
-        while (contador < i){                       // O(i)
+        while (contador < i){                       // O(n)
             actual = actual.siguiente;                  // O(1)
             contador += 1;                              // O(1)
         }
         return actual.valor;                        // O(1)
     }
 
-    // COMENTARIO. Esto se borra??
-    public static void main(String[] args) {
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
 
-        lista.agregarAtras(42);
-        lista.agregarAtras(43);
-        lista.agregarAtras(44);
-        lista.agregarAtras(45);
 
-        lista.modificarPosicion(2, 27);
-        lista.longitud();
+    public T sacarPrimero(){
+        Nodo actual = primero;
+        T valor_actual = actual.valor;
+        if (size > 1){                      // O(1)
+            primero = actual.siguiente;     // O(1)
+            primero.anterior = null;        // O(1)
+        } 
+        else {                              // Si size == 0, ent se borra la lista
+            primero = null;                 // O(1)
+        }
+        size -= 1;                          //O(1)
+        return valor_actual;                //O(1)
+
     }
 
-    public void eliminar(int i) {  // Eliminar en O(i).
+    public void eliminar(int i) {  // Eliminar en O(n).
         Nodo actual = primero;              // O(1)
         int contador = 0;                   // O(1)
-        while (contador < i) {              // O(i)
+        while (contador < i) {              // O(n)
             actual = actual.siguiente;      //     O(1)
             contador += 1;                  //     O(1)
         }
@@ -128,20 +133,20 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         size -= 1;  // O(1)                              
     }
 
-    public void modificarPosicion(int indice, T elem) {     // ModificarPosicion en O(indice).
+    public void modificarPosicion(int indice, T elem) {     // ModificarPosicion en O(n).
         Nodo actual = primero;                              // O(1)
         int contador = 0;                                   // O(1)
-        while (contador < indice) {                         // O(indice)
+        while (contador < indice) {                         // O(n)
             actual = actual.siguiente;                          // O(1)
             contador += 1;                                      // O(1)
         }
         actual.valor = elem;                                // O(1)
     }
 
-    public ListaEnlazada<T> copiar() { // Copiar lista en O(size)
+    public ListaEnlazada<T> copiar() { // Copiar lista en O(n)
         ListaEnlazada<T> copia = new ListaEnlazada<T>();    // O(1)
         Nodo copiada = primero; // O(1)
-        for (int i = 0; i < size;i++){         // O(size)
+        for (int i = 0; i < size;i++){         // O(n)
             copia.agregarAtras(copiada.valor); // O(1)
             copiada = copiada.siguiente;       // O(1)
         }
@@ -149,10 +154,10 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         return copia;                          
     }
 
-    public ListaEnlazada(ListaEnlazada<T> lista) { // Constructor de Lista con una lista de parametro en O(lista.size).
+    public ListaEnlazada(ListaEnlazada<T> lista) { // Constructor de Lista con una lista de parametro en O(n).
        
         Nodo copiada = lista.primero;           // O(1)
-        for (int i = 0; i < lista.size;i++){    // O(lista.size)
+        for (int i = 0; i < lista.size;i++){    // O(n)
             agregarAtras(copiada.valor);        // O(1)
             copiada = copiada.siguiente;        // O(1)
         }
@@ -161,19 +166,19 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     }
     
     @Override
-    public String toString() { // ToString en O(size).
+    public String toString() { // ToString en O(n).
         StringBuffer string = new StringBuffer();       // O(1)
-        string.append("[");                         // O(1)
+        string.append("[");                             // O(1)
         Nodo actual = primero;                          // O(1)
-        for (int i=0;i<size;i++){                       // O(size)
-            string.append(actual.valor.toString());     // O(1)
-            if (size != 1 && i != size -1) {            // O(1)
-                string.append(", ");                // O(1)
+        for (int i=0;i<size;i++){                       // O(n)
+            string.append(actual.valor.toString());         // O(1)
+            if (size != 1 && i != size -1) {                // O(1)
+                string.append(", ");                        // O(1)
             }
-            actual = actual.siguiente;                  // O(1)
+            actual = actual.siguiente;                      // O(1)
         }
         string.append("]");                         // O(1)
-        return string.toString();                       // O(1)
+        return string.toString();                   // O(1)
     }
 
     private class ListaIterador implements Iterador<T> {
@@ -207,6 +212,20 @@ public class ListaEnlazada<T> implements Secuencia<T> {
 
     public Iterador<T> iterador() { // O(1)
 	    return new ListaIterador(); // O(1)
+    }
+
+    public static void main(String[] args) {
+        ListaEnlazada<String> nuevaLista = new ListaEnlazada<>();
+        nuevaLista.agregarAtras("hola");
+        nuevaLista.agregarAdelante("ke tal");
+        System.out.println(nuevaLista.toString());
+        String elem = nuevaLista.sacarPrimero();
+        System.out.println(elem);
+        System.out.println(nuevaLista.toString());
+        String elem2 = nuevaLista.sacarPrimero();
+        System.out.println(elem2);
+        System.out.println(nuevaLista.toString());
+
     }
 
 }

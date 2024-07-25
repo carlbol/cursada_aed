@@ -72,7 +72,7 @@ public class Trie<V,T> implements DictDigital<V,T> {
     }
 
     public void definir(String clave, T valor){        // Definir en 
-        raiz = nodo_definir(raiz, clave, valor, 0);  // O(|clave|)
+        raiz = nodo_definir(raiz, clave, valor, 0);    // O(|clave|)
         size += 1;                                     // O(1)
     }
 
@@ -86,17 +86,17 @@ public class Trie<V,T> implements DictDigital<V,T> {
         }                                                             
         char c = clave.charAt(d);                     // O(1)
         Nodo nodo_a_definir = nodo_definir(x.siguiente.get(c), clave, valor, d+1);   // O(|clave|)
-        x.siguiente.set(c,nodo_a_definir);                                 // O(1) porque la lista está acotada por 256 caracteres. 
+        x.siguiente.set(c,nodo_a_definir);                                 // O(1) 
         return x;                                     // O(1)
     }
 
     
 
     public String[] claves(){                       // Claves en O(Sumatoria de la longitud de cada clave).
-        String[] lista_claves = new String[size];   //O(1)
-        enlistar(this.raiz, "", lista_claves);  //O(Sumatoria de la longitud de cada clave)
-        posicion = 0;                               //O(1)
-        return lista_claves;                        //O(1)
+        String[] lista_claves = new String[size];   // O(1)
+        enlistar(this.raiz, "", lista_claves);      // O(Sumatoria de la longitud de cada clave)
+        posicion = 0;                               // O(1)
+        return lista_claves;                        // O(1)
     }
 
     private void enlistar(Nodo x, String str, String[] lista){
@@ -127,13 +127,13 @@ public class Trie<V,T> implements DictDigital<V,T> {
         else {
             char c = clave.charAt(d); // O(1)
             Nodo nodo_a_eliminar = borrar_nodo(x.siguiente.get(c), clave, d+1); // O(|clave|)
-            x.siguiente.set(c, nodo_a_eliminar);                      // O(1) porque la lista está acotada por 256 caracteres. 
+            x.siguiente.set(c, nodo_a_eliminar);                      // O(1)
         }
         if (x.definicion != null){ // O(1)
             return x;              // O(1)
         }
         for (char c = 0; c < 256; c++){         // O(1)
-            if (x.siguiente.get(c)!=null){  // O(1) porque la Lista está acotada por 256 caracteres.
+            if (x.siguiente.get(c)!=null){  // O(1)
                 return x;                       // O(1)
             }   
         }

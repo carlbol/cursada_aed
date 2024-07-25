@@ -45,4 +45,6 @@ interface Secuencia<T> {
      */
     public ListaEnlazada<T> copiar();
 
+    public T sacarPrimero();
+
 }

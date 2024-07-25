@@ -14,13 +14,11 @@ public class Materia {
     // pred InvRep(m: Materia) {
     //    m.cantInscriptos >= 0 y
     //    la longitud de m.estudiantes = m.cantInscriptos, y cada estudiante en m.estudiantes aparece una sola vez.
-    //    la longitud de m.docentes es 4 y para todo elemento entre 0 y 3 de m.docentes[elemento] es mayor igual a cero.
-    //    en m.carrerasVinculadas no hay elementos repetidos y
+    //    la longitud de m.docentes es 4 y para todo elemento entre 0 y 3 de m.docentes[elemento] es mayor o igual a cero.
+    //    En m.carrerasVinculadas no hay elementos repetidos y
     //    la longitud de m.carrerasVinculadas es igual a m.materiasVinculadas y 
     //    para todo elemento i en carrerasVinculadas existe una Materia
     //    carrerasVinculadas[i].obtener(materiasVinculadas[i])
-    //    
-    //   
     //}
 
 
@@ -44,9 +42,6 @@ public class Materia {
     public Secuencia<String> materiasVinculadas(){ //Materias Vinculadas en O(1)
         return materiasVinculadas;  // O(1)
     }
-
-
-
 
     public void inscribir(String libreta_universitaria){ // Inscribir en O(1)
         cantInscriptos += 1;  // O(1)
