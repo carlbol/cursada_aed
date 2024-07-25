@@ -139,7 +139,7 @@ public class SistemaSIU {
             int cant_materias_de_estudiante = libretas.obtener(estudiante);  // O(1) porque la longitud de cada libreta está acotada.
             libretas.definir(estudiante, cant_materias_de_estudiante-1);     // O(1) porque la longitud de cada libreta está acotada.
         }
-        while (materia_a_borrar.materiasVinculadas().longitud() > 0){ //materiasVinculadas es O(1) y .longitud() es O(1) -> O(1) + O(|materiasVinculadas|)
+        while (materia_a_borrar.materiasVinculadas().longitud() > 0){ //materiasVinculadas es O(1) y .longitud() es O(1) -> O(1) + O(|Nm|)
             String nombre_materia = materia_a_borrar.materiasVinculadas().sacarPrimero(); // *Corrección* O(|1|)
             materia_a_borrar.carrerasVinculadas().sacarPrimero().borrar(nombre_materia); // *Corrección* carrerasVinculadas es O(1), .sacarPrimero es O(1), .borrar O(|clave|)
         } // la complejidad de este for entonces es O(Sumatoria de la |n| que componen los Nombres de la materia a borrar)
