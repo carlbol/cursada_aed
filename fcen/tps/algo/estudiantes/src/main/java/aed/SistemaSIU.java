@@ -26,47 +26,83 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
-        libretas = new Trie<>();                                    // O(1)
-        for (int i = 0; i < libretasUniversitarias.length;i++){     // O(E) con E = cantidad de estudiantes
-            libretas.definir(libretasUniversitarias[i], 0);   // O(1) porque una libreta está acotada.
+        libretas = new Trie<>();                                    
+        for (int i = 0; i < libretasUniversitarias.length;i++){     
+            libretas.definir(libretasUniversitarias[i], 0);   //O(1)
         }
-        // Hasta este punto la complejidad del SIU es O(E)
+        /* Primer parte del método:
+        Se crea el trie libretas y se itera tantas veces como libretas haya en libretasUniversitarias 
+        (este número es E). En cada iteración, se define en el trie la libreta en la posición i; 
+        esta definición se hace en tiempo constante por estar estas libretas acotadas. 
+        La definición de todas las libretas en el trie va a ser de orden O(|E|)
+         */
 
-        carreras = new Trie<>();                        // O(1)
-        for (int j = 0; j < infoMaterias.length;j++){   // Cantidad de materias - M
-            ParCarreraMateria[] nombres_materia = infoMaterias[j].getParesCarreraMateria();   // O(1)
-            Materia materia_nueva = new Materia();                                            // O(1)
+        carreras = new Trie<>(); 
+        //este for va a iterar tantas veces como materias distintas haya                       
+        for (int j = 0; j < infoMaterias.length;j++){   
+            ParCarreraMateria[] nombres_materia = infoMaterias[j].getParesCarreraMateria();   //O(1)
+            Materia materia_nueva = new Materia();                                            //O(1)        
+            // este va a iterar igual a la cantidad de nombres de una materia
+            for (int k = 0; k < nombres_materia.length;k++){  
+                String nombre_carrera = nombres_materia[k].carrera;         
+                String nombre_materia = nombres_materia[k].nombreMateria;   
 
-            for (int k = 0; k < nombres_materia.length;k++){ // Cantidad de nombres de materias - Mc
-                String nombre_carrera = nombres_materia[k].carrera;         // O(1)
-                String nombre_materia = nombres_materia[k].nombreMateria;   // O(1)
-
-                if (!carreras.esta(nombre_carrera)) {                       // O(|nombre_carrera|)
+                if (!carreras.esta(nombre_carrera)) {                       // Comprobar si una clave está lleva |nombre_carrera|
                     //defino la carrera si no lo está
                     DictDigital<String,Materia> materias_carrera = new Trie<>();    // O(1)
-                    carreras.definir(nombre_carrera, materias_carrera);             // O(|nombre_carrera|) 
+                    carreras.definir(nombre_carrera, materias_carrera);             // Definir es un método de orden O(|nombre_carrera|)
                     
                 }
 
                 DictDigital<String,Materia> dicAsociado = carreras.obtener(nombre_carrera); // O(|nombre_carrera|)
-
-                // Hasta este punto, se recorre la clave nombre_carrera 'cantMaterias' veces.
-                // Cumpliendo la complejidad de la sumatoria de |c| * |Mc| 
-                // donde c pertenece al conjunto de las Carreras y Mc es el conjunto de los nombres de materia de la carrera de grado c.
-
-                //defino el nombre de la materia para una carrera
                 dicAsociado.definir(nombre_materia, materia_nueva); // O(|nombre_materia|)
-
                 //agrego a lista de materias vinculadas
-                dicAsociado.obtener(nombre_materia).agregarMateriaVinculada(dicAsociado, nombre_materia); // O(|nombre_materia|) AgregarMateriaVinculada es O(1) entonces no afecta.
+                dicAsociado.obtener(nombre_materia).agregarMateriaVinculada(dicAsociado, nombre_materia); // .obtener se hace en O(|nombre_materia)
+                                                                                    //mientras qye agregarMateriaVinculada se hace constante.
                
-                // Hasta este punto se recorren todos los nombres de una materia, que ciclando con el primer for,
-                // se terminan recorriendo todos los nombres de todas las materias.
-                // Cumpliendo con la complejidad de la doble sumatoria |n|
-                // Con n perteneciente al Nm (Conjunto de nombres de una materia m) y esto sucede 'cantMaterias' veces.
+        /*Segunda parte del método:
+        Sabemos que infoMaterias.length == |M| (cardinal del conjunto de todas las materias) 
+        De cada iteración del primer loop vamos a obtener una lista nombres_materia con los distintos
+        nombres de una misma materia y su respectiva carrera (nombres_materia.length == |N_m|).
+        En el segundo loop vamos a iterar |N_m| veces.
+        Durante este segundo loop puede darse el caso que una materia no tenga a su par carrera;
+        para saber si la carrera está definida se usa carreras.esta(c) (método que se hace en orden 
+        de O(c), siendo c el nombre de una carrera pertenciente a C -el conjunto de carreras-) y, de
+        no estarlo, se define con .definir (también en O(c)).
+        Ya teniendo la c definida como clave cuyo valor es un trie, se procede a definir la materia n
+        en dicho trie en O(|n|), |n| == longitud del nombre de la materia para cierta carrera.
+        Para tener una forma de representar la relación entre las distintas materias m pertenecientes a 
+        N_m, se modifica el atributo carrerasVinculadas de la Materia (usando .obtener, O(|n|))
+
+        Así, la complejidad del método completo tiene la forma:
+        E + SUMATORIA_m_en_M(SUMATORIA_n_en_Nm(|c_asociada_a_n| + |n|))
+        Es decir, tenemos una sumatoria anidada. Para ser más claros usemos un ejemplo para una materia m1
+        arbitraria. Para esa m1, tenemos la suma de todos sus nombres distintos junto con la carrera que
+        le corresponde: (|c1| + |nombrec1_m1|) + (|c2| + |nombrec2_m1|) + (|c3| + |nombrec3_m1|)
+        Para una m2 distinta: (|c1| + |nombrec1_m2|) + (|c3| + |nombrec3_m2|) + (|c4| + |nombrec4_m2|))
+        Entonces para todas las materias veríamos algo como:
+        |c1| + |nombrec1_m1| + |c2| + |nombrec2_m1| + |c3| + |nombrec3_m1| + 
+        |c1| + |nombrec1_m2| +                        |c3| + |nombrec3_m2| + |c4| + |nombrec4_m2| +
+        |c1| + |nombrec1_mk| + |c2| + |nombrec2_mk| + |c3| + |nombrec3_mk| + |c4| + |nombrec4_m2| + 
+        (... así con todos las n carreras y las materias que le corresponden ... )
+
+        Agrupando las carreras nos queda la suma:
+        |c1|*|M_c1| + |c2|*|M_c2| + |c3|*|M_c3|+ ...        (la longitud de cada carrera multiplicada por 
+                                                            la cantidad de materias asociadas)
+        + |nombre1_m1| + |nombre2_m1| + |nombre3_m1| + ... (los distintos nombres de cada materia)
+        |nombre1_m2| + |nombre2_m2| + |nombre3_m2| +...
+        |nombre1_mk| + |nombre2_mk| + |nombre3_mk| +...
+
+        + E                                                  (la cantidad de estudiantes)     
+        
+        Esto es efectivamente lo mismo que la Sumatoria original del enunciado:
+        SUMATORIA_c_en_C(|c|*|M_c|) + SUMATORIA_m_en_M(Sumatoria_n_en_Nm(|n|)) + E
+        (|c1|*|M_c1| + |c2|*|M_c2| + ... + |ck|*|M_ck|)
+        + (|nombre1_m1| + |nombre2_m1| + ... + |nombrep_mq)
+        + E  
+        */
             }
-        }	    // Por lo tanto el constructor de SistemaSIU tiene la complejidad de 
-                // la sumatoria de |c| * |Mc| + la doble sumatoria |n| + E
+        }	
     }
     // O(|c| + |m|)
     public void inscribir(String estudiante, String carrera, String materia){

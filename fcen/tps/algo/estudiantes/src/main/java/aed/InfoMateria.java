@@ -4,7 +4,7 @@ public class InfoMateria{
     private ParCarreraMateria[] paresCarreraMateria;
     
     // INVARIANTE:
-    // pred InvRep(i: InfoMateria<ParCarreraMateria>) { ** charlar si es i: InfoMateria solo.
+    // pred InvRep(i: InfoMateria<ParCarreraMateria>) {
     //    i.ParesCarreraMateria != null 
     //}
 
