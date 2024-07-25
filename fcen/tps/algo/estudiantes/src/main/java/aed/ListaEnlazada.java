@@ -100,6 +100,7 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         } 
         else {                              // Si size == 0, ent se borra la lista
             primero = null;                 // O(1)
+            ultimo = null;
         }
         size -= 1;                          //O(1)
         return valor_actual;                //O(1)
