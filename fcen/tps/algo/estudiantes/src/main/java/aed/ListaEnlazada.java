@@ -214,18 +214,5 @@ public class ListaEnlazada<T> implements Secuencia<T> {
 	    return new ListaIterador(); // O(1)
     }
 
-    public static void main(String[] args) {
-        ListaEnlazada<String> nuevaLista = new ListaEnlazada<>();
-        nuevaLista.agregarAtras("hola");
-        nuevaLista.agregarAdelante("ke tal");
-        System.out.println(nuevaLista.toString());
-        String elem = nuevaLista.sacarPrimero();
-        System.out.println(elem);
-        System.out.println(nuevaLista.toString());
-        String elem2 = nuevaLista.sacarPrimero();
-        System.out.println(elem2);
-        System.out.println(nuevaLista.toString());
-
-    }
 
 }

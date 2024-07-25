@@ -110,8 +110,9 @@ public class SistemaSIU {
     }
 
     /*Para evitar el uso de .obtener() -que suponía recorrer las listas enlazadas con un costo de orden O(n)-
-     optamos por el uso de la operación .sacarPrimero que retorna el primer valor de una lista enlazada
-    
+     optamos por el uso de la operación .sacarPrimero que borra el primer valor de una lista enlazada 
+     y lo retorna en O(1). Con esto, el método cerrarMateria cumple con la complejidad inicial propuesta:
+     O(|c| + |m| + SUM_n_de_Nm |n| + |e|)
      */
 
 
